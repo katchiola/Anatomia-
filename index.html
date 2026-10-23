@@ -1,42 +1,436 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Anatomia Mágica 1.4</title><style>*{box-sizing:border-box}body{margin:0;background:#101827;color:#fff;font:16px system-ui,sans-serif}header{padding:15px;display:flex;justify-content:space-between;align-items:center;gap:12px}h1{font-size:21px;margin:0}small{color:#b9c5d6}#status{color:#93c5fd;font-size:12px;text-align:right}.stage{position:relative;margin:auto;width:100%;max-width:780px;aspect-ratio:3/4;max-height:72vh;background:#1e293b;overflow:hidden;border-radius:16px}video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}canvas{pointer-events:auto}.mirror{transform:scaleX(-1)}.hint{position:absolute;bottom:12px;left:12px;right:12px;background:#111a2ad9;padding:10px;border-radius:10px;text-align:center;font-size:13px;pointer-events:none}.controls{padding:14px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}button{border:0;background:#22c55e;color:#09200f;padding:12px;border-radius:12px;font-weight:700}button.secondary{background:#334155;color:white}.info{padding:0 18px;max-width:780px;margin:auto;color:#dbeafe;font-size:14px}#detail{font-size:16px;min-height:42px;color:white}</style></head><body><header><div><h1>🫀 Anatomia Mágica</h1><small>Explore o corpo humano</small></div><span id="status">Pronto para começar</span></header><div class="stage" id="stage"><video id="video" autoplay muted playsinline></video><canvas id="overlay"></canvas><div class="hint" id="hint">Mostre uma pessoa de frente, com ombros e quadris visíveis.</div></div><div class="controls"><button id="start">📷 Iniciar câmera</button><button class="secondary" id="switch">↻ Trocar câmera</button><button class="secondary" id="mirror">🪞 Espelhar: não</button><button class="secondary" id="labels">🏷️ Nomes: sim</button></div><div class="info"><p id="detail">Toque em um órgão para descobrir sua função.</p><p>Representação anatômica educativa aproximada, não uma imagem real do interior do corpo. A imagem da câmera é processada no aparelho.</p></div><script>
-const $=s=>document.querySelector(s),video=$('#video'),canvas=$('#overlay'),ctx=canvas.getContext('2d'),stage=$('#stage');let stream,front=false,mirrored=false,labels=true,pose=null,ready=false,working=false,last=0,landmarks=null,spots=[];const organs=[['Pulmão direito',-.27,-.24,.21,.31,'#e8a3b1','Os pulmões levam oxigênio ao sangue.'],['Pulmão esquerdo',.27,-.24,.21,.31,'#e8a3b1','Os pulmões ajudam na respiração.'],['Coração',.07,-.17,.16,.18,'#dc3153','O coração bombeia sangue pelo corpo.'],['Fígado',-.21,.17,.34,.21,'#99513f','O fígado processa nutrientes e participa da digestão.'],['Estômago',.24,.20,.18,.19,'#efbd75','O estômago mistura os alimentos.'],['Intestinos',0,.48,.32,.27,'#ce8da9','Os intestinos absorvem nutrientes e água.']];function status(s,h){$('#status').textContent=s;if(h)$('#hint').textContent=h}function setMirror(){video.classList.toggle('mirror',mirrored);$('#mirror').textContent='🪞 Espelhar: '+(mirrored?'sim':'não')}function loadScript(url){return new Promise((resolve,reject)=>{let s=document.createElement('script');s.src=url;s.onload=resolve;s.onerror=()=>reject(new Error('Falha ao carregar '+url));document.head.appendChild(s)})}async function loadPose(){if(pose)return;status('Carregando reconhecimento…');if(!window.Pose){let error;for(const url of ['https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js','https://unpkg.com/@mediapipe/pose@0.5.1675469404/pose.js']){try{await loadScript(url);if(window.Pose)break}catch(e){error=e}}if(!window.Pose)throw error||new Error('MediaPipe não carregou')}pose=new window.Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});pose.setOptions({modelComplexity:0,smoothLandmarks:true,enableSegmentation:false,minDetectionConfidence:.5,minTrackingConfidence:.5});pose.onResults(r=>{landmarks=r.poseLandmarks||null});await pose.initialize()}
-async function start(){const btn=$('#start');btn.disabled=true;working=false;try{if(!navigator.mediaDevices?.getUserMedia)throw Error('Acesso à câmera indisponível neste navegador.');if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:front?'user':'environment'},width:{ideal:1280},height:{ideal:720}}});video.srcObject=stream;await video.play();status('Câmera ativa','Câmera funcionando. Preparando reconhecimento corporal…');btn.textContent='↻ Reiniciar câmera';btn.disabled=false;resize();working=true;requestAnimationFrame(loop);try{await loadPose();ready=true;status('Reconhecimento ativo','Aponte para uma pessoa de frente, com tronco e quadris visíveis.')}catch(e){ready=false;status('Câmera ativa — sem rastreamento','Falha ao carregar MediaPipe: '+e.message+'; mostrando câmera normalmente.');console.error(e)}}catch(e){status('Erro na câmera',e.name+': '+e.message);btn.disabled=false;console.error(e)}}function resize(){let r=stage.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0)}addEventListener('resize',resize);function toScreen(p){let w=stage.clientWidth,h=stage.clientHeight,vw=video.videoWidth||w,vh=video.videoHeight||h,scale=Math.min(w/vw,h/vh),dw=vw*scale,dh=vh*scale;return {x:(w-dw)/2+(mirrored?1-p.x:p.x)*dw,y:(h-dh)/2+p.y*dh}}// Desenhos vetoriais: formas anatômicas em coordenadas locais (-1 a 1).
-const shapes={
- 'Pulmão direito':'M .08 -1 C -.40 -.99 -.78 -.75 -.88 -.28 C -1 .13 -.90 .66 -.55 .94 C -.30 1.08 -.08 .82 .03 .48 C .17 .12 .07 -.20 .08 -1 Z',
- 'Pulmão esquerdo':'M -.08 -1 C .43 -.99 .78 -.75 .87 -.29 C .99 .13 .87 .72 .52 .96 C .29 1.08 .07 .79 -.04 .43 C -.20 .15 -.04 -.18 -.08 -1 Z',
- 'Coração':'M 0 -.55 C -.55 -1.10 -1.08 -.47 -.79 .11 C -.56 .52 -.12 .84 .03 1 C .27 .68 .85 .38 .91 -.15 C 1.02 -.82 .34 -1.04 0 -.55 Z',
- 'Fígado':'M -1 -.22 C -.91 -.72 -.27 -.89 .42 -.65 C .78 -.52 1 -.17 .98 .12 C .73 .28 .51 .34 .26 .37 C .02 .72 -.55 .66 -.84 .37 C -.98 .21 -1 .01 -1 -.22 Z',
- 'Estômago':'M -.32 -1 C -.17 -.73 -.22 -.47 .04 -.34 C .43 -.55 .84 -.24 .78 .26 C .75 .67 .29 .98 -.12 .92 C -.52 .86 -.75 .57 -.66 .19 C -.56 -.13 -.63 -.52 -.32 -1 Z',
- 'Intestinos':'M -.83 -.77 C -.46 -.95 .55 -.95 .84 -.65 C 1 -.38 .94 .38 .75 .75 C .35 1 -.44 1 -.78 .70 C -.99 .36 -1 -.41 -.83 -.77 Z'
-};
-const organPaths=Object.fromEntries(Object.entries(shapes).map(([k,v])=>[k,new Path2D(v)]));
-function drawOrgan(name,x,y,rx,ry,color,t){
- ctx.save();ctx.translate(x,y);ctx.scale(rx,ry);
- const path=organPaths[name];ctx.globalAlpha=.92;
- let gradient=ctx.createLinearGradient(-.8,-1,.8,1);gradient.addColorStop(0,'#fff0');gradient.addColorStop(.32,color);gradient.addColorStop(1,color);
- ctx.fillStyle=gradient;ctx.fill(path);ctx.globalAlpha=1;
- ctx.lineWidth=.035;ctx.strokeStyle='#ffffffb8';ctx.stroke(path);
- ctx.save();ctx.clip(path);ctx.lineCap='round';ctx.lineJoin='round';
- if(name.startsWith('Pulmão')){
-   ctx.strokeStyle='#b84f6988';ctx.lineWidth=.045;
-   for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(0,-.82);ctx.bezierCurveTo(i*.16,-.25,i*.24,.3,i*.21,.83);ctx.stroke()}
-   ctx.strokeStyle='#f8d8dcaa';ctx.lineWidth=.035;ctx.beginPath();ctx.moveTo(-.7,-.1);ctx.quadraticCurveTo(0,.06,.7,.22);ctx.stroke();
- }else if(name==='Coração'){
-   ctx.strokeStyle='#8b1536';ctx.lineWidth=.075;ctx.beginPath();ctx.moveTo(-.12,-.55);ctx.bezierCurveTo(-.20,-.1,.24,.15,.1,.72);ctx.stroke();
-   ctx.strokeStyle='#f6a2af';ctx.lineWidth=.06;ctx.beginPath();ctx.moveTo(.12,-.53);ctx.quadraticCurveTo(.5,-.28,.42,.1);ctx.stroke();
- }else if(name==='Fígado'){
-   ctx.strokeStyle='#5d2925';ctx.lineWidth=.06;ctx.beginPath();ctx.moveTo(.16,-.66);ctx.quadraticCurveTo(.36,-.12,.13,.48);ctx.stroke();
-   ctx.strokeStyle='#d8a08c';ctx.lineWidth=.03;ctx.beginPath();ctx.moveTo(-.86,.04);ctx.quadraticCurveTo(-.2,.22,.88,.12);ctx.stroke();
- }else if(name==='Estômago'){
-   ctx.strokeStyle='#c5814b';ctx.lineWidth=.04;
-   for(let i=0;i<4;i++){ctx.beginPath();ctx.moveTo(-.43,-.05+i*.17);ctx.quadraticCurveTo(.08,.17+i*.13,.63,-.02+i*.13);ctx.stroke()}
- }else if(name==='Intestinos'){
-   ctx.strokeStyle='#a94e75';ctx.lineWidth=.16;
-   for(let i=0;i<5;i++){let yy=-.56+i*.28;ctx.beginPath();ctx.moveTo(-.62,yy);ctx.bezierCurveTo(-.3,yy-.2,.15,yy+.19,.59,yy);ctx.stroke()}
-   ctx.strokeStyle='#f9c5d7';ctx.lineWidth=.07;
-   for(let i=0;i<4;i++){let yy=-.44+i*.30;ctx.beginPath();ctx.moveTo(-.55,yy);ctx.bezierCurveTo(-.1,yy+.17,.27,yy-.16,.54,yy);ctx.stroke()}
- }
- ctx.restore();ctx.restore();
-}
-function draw(t){const w=stage.clientWidth,h=stage.clientHeight;ctx.clearRect(0,0,w,h);spots=[];if(!landmarks)return;let a=landmarks[11],b=landmarks[12],c=landmarks[23],d=landmarks[24];if(![a,b,c,d].every(p=>(p.visibility??1)>.35))return;let s1=toScreen(a),s2=toScreen(b),h1=toScreen(c),h2=toScreen(d),sx=(s1.x+s2.x)/2,sy=(s1.y+s2.y)/2,hx=(h1.x+h2.x)/2,hy=(h1.y+h2.y)/2,len=Math.hypot(hx-sx,hy-sy),wid=Math.hypot(s2.x-s1.x,s2.y-s1.y);if(len<20||wid<20)return;const angle=Math.atan2(hy-sy,hx-sx)-Math.PI/2;ctx.save();ctx.translate((sx+hx)/2,(sy+hy)/2);ctx.rotate(angle);const unit=Math.max(wid,len*.65);for(const [name,x,y,rx,ry,color,description] of organs){let ox=x*unit,oy=y*len,ex=rx*unit,ey=ry*len;if(name==='Coração'){let pulse=1+.055*Math.sin(t/180);ex*=pulse;ey*=pulse}drawOrgan(name,ox,oy,ex,ey,color,t);if(labels){ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#111827';ctx.strokeText(name,ox,oy);ctx.fillStyle='white';ctx.fillText(name,ox,oy)}let co=Math.cos(angle),si=Math.sin(angle);spots.push({x:(sx+hx)/2+ox*co-oy*si,y:(sy+hy)/2+ox*si+oy*co,r:Math.max(ex,ey),name,description})}ctx.restore()}let busy=false;async function loop(t){if(!working)return;requestAnimationFrame(loop);if(t-last<90)return;last=t;if(ready&&!busy&&video.readyState>=2){busy=true;try{await pose.send({image:video})}catch(e){ready=false;status('Erro no rastreamento',e.message)}finally{busy=false}}draw(t)}canvas.addEventListener('click',e=>{let r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,hit=spots.find(p=>Math.hypot(p.x-x,p.y-y)<p.r);if(hit)$('#detail').textContent=hit.name+': '+hit.description});$('#start').onclick=start;$('#switch').onclick=()=>{front=!front;mirrored=front;setMirror();start()};$('#mirror').onclick=()=>{mirrored=!mirrored;setMirror()};$('#labels').onclick=()=>{labels=!labels;$('#labels').textContent='🏷️ Nomes: '+(labels?'sim':'não')};setMirror();
-</script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Anatomia Mágica 1.5.1</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #101827; color: #fff; font: 16px system-ui, sans-serif; }
+    header { max-width: 780px; margin: auto; padding: 15px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    h1 { font-size: 21px; margin: 0; }
+    small { color: #b9c5d6; }
+    #status { color: #93c5fd; font-size: 12px; text-align: right; }
+    .stage { position: relative; margin: auto; width: 100%; max-width: 780px; aspect-ratio: 3/4; max-height: 72vh; background: #1e293b; overflow: hidden; border-radius: 16px; }
+    video, canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    .stage.demo video { opacity: 0; }
+    .mirror { transform: scaleX(-1); }
+    .hint { position: absolute; bottom: 12px; left: 12px; right: 12px; background: #111a2ad9; padding: 10px; border-radius: 10px; text-align: center; font-size: 13px; pointer-events: none; }
+    .controls { max-width: 780px; margin: auto; padding: 14px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
+    button, select { border: 0; background: #22c55e; color: #09200f; padding: 11px 12px; border-radius: 12px; font: inherit; font-weight: 700; }
+    button { cursor: pointer; }
+    button:disabled { opacity: .65; cursor: default; }
+    button.secondary, select { background: #334155; color: white; }
+    select { max-width: min(100%, 250px); }
+    .angle-controls { width: 100%; display: flex; align-items: center; gap: 10px; }
+    .angle-controls input { flex: 1; min-width: 100px; }
+    .angle-controls output { min-width: 142px; text-align: right; font-size: 13px; }
+    [hidden] { display: none !important; }
+    .info { padding: 0 18px; max-width: 780px; margin: auto; color: #dbeafe; font-size: 14px; }
+    #detail { font-size: 16px; min-height: 42px; color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 1.5.1 · imagens em revisão</small></div>
+    <span id="status" role="status">Modo demonstração</span>
+  </header>
+  <div class="stage demo" id="stage">
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="overlay" aria-label="Órgãos sobre o corpo"></canvas>
+    <div class="hint" id="hint">Arraste o ângulo para ver a rotação. Toque em “Iniciar câmera” para experimentar no corpo.</div>
+  </div>
+  <div class="controls">
+    <button id="start" type="button">📷 Iniciar câmera</button>
+    <button id="demo" class="secondary" type="button">🧪 Demonstração</button>
+    <button id="switch" class="secondary" type="button">↻ Trocar câmera</button>
+    <button id="mirror" class="secondary" type="button">🪞 Espelhar: não</button>
+    <button id="labels" class="secondary" type="button">🏷️ Nomes: sim</button>
+    <select id="organ-filter" aria-label="Órgãos exibidos">
+      <option value="principais">Órgãos principais</option>
+      <option value="todos">Todos os 13 órgãos</option>
+      <option value="pulmoes">Pulmões juntos</option>
+      <option value="rins">Rins juntos</option>
+    </select>
+    <button id="rotation-mode" class="secondary" type="button" disabled>🔄 Ângulo: manual</button>
+    <div class="angle-controls" id="angle-controls">
+      <label for="angle-slider">Vista</label>
+      <input id="angle-slider" type="range" min="0" max="7" step="1" value="0">
+      <output id="angle-output" for="angle-slider">Frente · 0°</output>
+    </div>
+  </div>
+  <div class="info">
+    <p id="detail">Toque em um órgão para descobrir sua função.</p>
+    <p>As oito vistas são ilustrações educativas em revisão, não um modelo 3D anatômico validado. O ângulo automático é uma estimativa baseada nos ombros e quadris; use o controle manual se não corresponder à posição da pessoa. A câmera é processada no aparelho.</p>
+  </div>
+  <script>
+    const $ = selector => document.querySelector(selector);
+    const stage = $('#stage');
+    const video = $('#video');
+    const canvas = $('#overlay');
+    const ctx = canvas.getContext('2d');
+    const viewFiles = [
+      '01-frente.png', '02-diagonal-frontal-esquerda.png', '03-lateral-esquerda.png',
+      '04-diagonal-traseira-esquerda.png', '05-costas.png',
+      '06-diagonal-traseira-direita.png', '07-lateral-direita.png',
+      '08-diagonal-frontal-direita.png'
+    ];
+    const viewNames = [
+      'Frente · 0°', 'Diagonal frontal esquerda · 45°', 'Lateral esquerda · 90°',
+      'Diagonal traseira esquerda · 135°', 'Costas · 180°',
+      'Diagonal traseira direita · 225°', 'Lateral direita · 270°',
+      'Diagonal frontal direita · 315°'
+    ];
+    // x positivo = lado esquerdo anatômico; y positivo = direção dos quadris.
+    const organs = [
+      { id: 'rim_direito', name: 'Rim direito', x: -.24, y: .28, w: .23, h: .27, info: 'Filtra o sangue e ajuda a formar a urina.' },
+      { id: 'rim_esquerdo', name: 'Rim esquerdo', x: .24, y: .28, w: .23, h: .27, info: 'Filtra o sangue e ajuda a regular água e sais.' },
+      { id: 'pancreas', name: 'Pâncreas', x: 0, y: .27, w: .52, h: .22, info: 'Produz enzimas digestivas e hormônios, como a insulina.' },
+      { id: 'baco', name: 'Baço', x: .39, y: .12, w: .19, h: .24, info: 'Participa da defesa do organismo e filtra o sangue.' },
+      { id: 'bexiga', name: 'Bexiga', x: 0, y: .69, w: .19, h: .20, info: 'Armazena a urina antes de sua eliminação.' },
+      { id: 'figado', name: 'Fígado', x: -.22, y: .13, w: .51, h: .29, info: 'Processa nutrientes e participa da digestão.' },
+      { id: 'estomago', name: 'Estômago', x: .23, y: .17, w: .37, h: .30, info: 'Mistura os alimentos durante a digestão.' },
+      { id: 'grosso', name: 'Intestino grosso', x: 0, y: .45, w: .57, h: .32, info: 'Absorve água e ajuda a formar as fezes.' },
+      { id: 'delgado', name: 'Intestino delgado', x: 0, y: .45, w: .36, h: .25, info: 'Absorve a maior parte dos nutrientes dos alimentos.' },
+      { id: 'pulmao_direito', name: 'Pulmão direito', x: -.27, y: -.24, w: .58, h: .50, info: 'Ajuda a levar oxigênio ao sangue.' },
+      { id: 'pulmao_esquerdo', name: 'Pulmão esquerdo', x: .27, y: -.24, w: .58, h: .50, info: 'Ajuda na respiração e nas trocas gasosas.' },
+      { id: 'coracao', name: 'Coração', x: .03, y: -.15, w: .32, h: .31, info: 'Bombeia o sangue pelo corpo.' },
+      { id: 'cerebro', name: 'Cérebro', x: 0, y: -.88, w: .55, h: .28, info: 'Coordena os movimentos, pensamentos e sentidos.' }
+    ];
+    const mainIds = new Set(['cerebro', 'pulmao_direito', 'pulmao_esquerdo', 'coracao', 'figado', 'estomago', 'grosso', 'delgado']);
+    const cache = new Map();
+    let stream = null;
+    let pose = null;
+    let landmarks = null;
+    let demo = true;
+    let frontCamera = false;
+    let mirrored = false;
+    let labels = true;
+    let manual = true;
+    let manualView = 0;
+    let smoothedYaw = null;
+    let currentView = 0;
+    let xSign = 1;
+    let trackingReady = false;
+    let sending = false;
+    let lastFrame = 0;
+    let hitSpots = [];
+
+    function status(message, hint) {
+      $('#status').textContent = message;
+      if (hint) $('#hint').textContent = hint;
+    }
+    function selectedOrgans() {
+      const selected = $('#organ-filter').value;
+      if (selected === 'principais') return organs.filter(organ => mainIds.has(organ.id));
+      if (selected === 'todos') return organs;
+      if (selected === 'pulmoes') return organs.filter(organ => organ.id.startsWith('pulmao_'));
+      if (selected === 'rins') return organs.filter(organ => organ.id.startsWith('rim_'));
+      return organs.filter(organ => organ.id === selected);
+    }
+    for (const organ of [...organs].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))) {
+      const option = document.createElement('option');
+      option.value = organ.id;
+      option.textContent = organ.name;
+      $('#organ-filter').append(option);
+    }
+    function resize() {
+      const rect = stage.getBoundingClientRect();
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * ratio);
+      canvas.height = Math.round(rect.height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      draw(performance.now());
+    }
+    window.addEventListener('resize', resize);
+    function screenPoint(point) {
+      const w = stage.clientWidth, h = stage.clientHeight;
+      const vw = video.videoWidth || w, vh = video.videoHeight || h;
+      const scale = Math.min(w / vw, h / vh);
+      const dw = vw * scale, dh = vh * scale;
+      return { x: (w - dw) / 2 + (mirrored ? 1 - point.x : point.x) * dw, y: (h - dh) / 2 + point.y * dh };
+    }
+    function demoLandmarks() {
+      const angle = manualView * Math.PI / 4;
+      const width = Math.cos(angle);
+      const depth = Math.sin(angle);
+      const points = [];
+      points[11] = { x: .5 + .16 * width, y: .34, z: -.16 * depth, visibility: 1 };
+      points[12] = { x: .5 - .16 * width, y: .34, z: .16 * depth, visibility: 1 };
+      points[23] = { x: .5 + .11 * width, y: .69, z: -.11 * depth, visibility: 1 };
+      points[24] = { x: .5 - .11 * width, y: .69, z: .11 * depth, visibility: 1 };
+      return points;
+    }
+    function estimateYaw(points) {
+      const shoulderX = points[11].x - points[12].x;
+      const hipX = points[23].x - points[24].x;
+      const shoulderZ = (Number(points[12].z) || 0) - (Number(points[11].z) || 0);
+      const hipZ = (Number(points[24].z) || 0) - (Number(points[23].z) || 0);
+      const lateral = shoulderX * .7 + hipX * .3;
+      const depth = shoulderZ * .7 + hipZ * .3;
+      return Math.atan2(depth, lateral);
+    }
+    function viewForYaw(yaw) {
+      return ((Math.round(yaw * 4 / Math.PI) % 8) + 8) % 8;
+    }
+    function updateRotation(points) {
+      if (manual) {
+        currentView = manualView;
+      } else {
+        const raw = estimateYaw(points);
+        if (!Number.isFinite(raw)) return;
+        if (smoothedYaw === null || !Number.isFinite(smoothedYaw)) smoothedYaw = raw;
+        else smoothedYaw += Math.atan2(Math.sin(raw - smoothedYaw), Math.cos(raw - smoothedYaw)) * .22;
+        const candidate = viewForYaw(smoothedYaw);
+        const center = currentView * Math.PI / 4;
+        const distance = Math.abs(Math.atan2(Math.sin(smoothedYaw - center), Math.cos(smoothedYaw - center)));
+        if (candidate !== currentView && distance > Math.PI / 8 + .06) currentView = candidate;
+      }
+      $('#angle-output').textContent = viewNames[currentView];
+      $('#angle-slider').value = currentView;
+    }
+    function imageCrop(image) {
+      const sample = document.createElement('canvas');
+      sample.width = 160;
+      sample.height = Math.max(1, Math.round(image.naturalHeight * 160 / image.naturalWidth));
+      const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
+      sampleCtx.drawImage(image, 0, 0, sample.width, sample.height);
+      try {
+        const data = sampleCtx.getImageData(0, 0, sample.width, sample.height).data;
+        let left = sample.width, right = -1, top = sample.height, bottom = -1;
+        for (let y = 0; y < sample.height; y++) {
+          for (let x = 0; x < sample.width; x++) {
+            if (data[(y * sample.width + x) * 4 + 3] < 32) continue;
+            left = Math.min(left, x); right = Math.max(right, x);
+            top = Math.min(top, y); bottom = Math.max(bottom, y);
+          }
+        }
+        if (right >= left) {
+          const sx = Math.max(0, (left - 2) * image.naturalWidth / sample.width);
+          const sy = Math.max(0, (top - 2) * image.naturalHeight / sample.height);
+          const ex = Math.min(image.naturalWidth, (right + 3) * image.naturalWidth / sample.width);
+          const ey = Math.min(image.naturalHeight, (bottom + 3) * image.naturalHeight / sample.height);
+          return { sx, sy, w: ex - sx, h: ey - sy };
+        }
+      } catch (error) { console.warn('Não foi possível medir a transparência da imagem.', error); }
+      return { sx: 0, sy: 0, w: image.naturalWidth, h: image.naturalHeight };
+    }
+    function sprite(organ, view) {
+      const key = `${organ.id}/${view}`;
+      if (cache.has(key)) {
+        const found = cache.get(key);
+        cache.delete(key); cache.set(key, found);
+        return found;
+      }
+      const entry = { image: new Image(), ready: false, error: false, crop: null };
+      entry.image.onload = () => { entry.crop = imageCrop(entry.image); entry.ready = true; draw(performance.now()); };
+      entry.image.onerror = () => { entry.error = true; console.error('Imagem ausente:', entry.image.src); draw(performance.now()); };
+      entry.image.src = `orgaos/vistas/${organ.id}/${viewFiles[view]}`;
+      cache.set(key, entry);
+      while (cache.size > 36) cache.delete(cache.keys().next().value);
+      return entry;
+    }
+    function bodyGeometry(points) {
+      const keys = [11, 12, 23, 24];
+      if (!keys.every(key => points[key] && Number.isFinite(points[key].x) && Number.isFinite(points[key].y))) return null;
+      if (Math.max(points[11].visibility ?? 1, points[12].visibility ?? 1) < .35 ||
+          Math.max(points[23].visibility ?? 1, points[24].visibility ?? 1) < .35) return null;
+      const leftShoulder = screenPoint(points[11]), rightShoulder = screenPoint(points[12]);
+      const leftHip = screenPoint(points[23]), rightHip = screenPoint(points[24]);
+      const shoulders = { x: (leftShoulder.x + rightShoulder.x) / 2, y: (leftShoulder.y + rightShoulder.y) / 2 };
+      const hips = { x: (leftHip.x + rightHip.x) / 2, y: (leftHip.y + rightHip.y) / 2 };
+      const length = Math.hypot(hips.x - shoulders.x, hips.y - shoulders.y);
+      const width = Math.hypot(leftShoulder.x - rightShoulder.x, leftShoulder.y - rightShoulder.y);
+      if (length < 20) return null;
+      const vertical = { x: (hips.x - shoulders.x) / length, y: (hips.y - shoulders.y) / length };
+      const perpendicular = { x: vertical.y, y: -vertical.x };
+      const signedWidth = (leftShoulder.x - rightShoulder.x) * perpendicular.x + (leftShoulder.y - rightShoulder.y) * perpendicular.y;
+      if (Math.abs(signedWidth) > 8) xSign = Math.sign(signedWidth);
+      const projection = Math.max(.23, Math.abs(Math.cos((manual ? manualView * Math.PI / 4 : smoothedYaw ?? 0))));
+      const unit = Math.max(width, length * .65);
+      return { center: { x: (shoulders.x + hips.x) / 2, y: (shoulders.y + hips.y) / 2 }, vertical, horizontal: { x: perpendicular.x * xSign, y: perpendicular.y * xSign }, length, unit, projection, shoulders, hips };
+    }
+    function drawDemoBody(body) {
+      ctx.save();
+      ctx.translate(body.center.x, body.center.y);
+      ctx.transform(body.horizontal.x * body.unit, body.horizontal.y * body.unit,
+        body.vertical.x * body.length, body.vertical.y * body.length, 0, 0);
+      ctx.fillStyle = '#475569';
+      ctx.beginPath();
+      ctx.moveTo(-.58 * body.projection, -.53); ctx.lineTo(.58 * body.projection, -.53);
+      ctx.lineTo(.40 * body.projection, .52); ctx.lineTo(-.40 * body.projection, .52); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(0, -.88, .31 * body.projection, .24, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    function draw(t) {
+      const w = stage.clientWidth, h = stage.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      hitSpots = [];
+      const points = demo ? demoLandmarks() : landmarks;
+      if (!points) return;
+      updateRotation(points);
+      const body = bodyGeometry(points);
+      if (!body) return;
+      if (demo) drawDemoBody(body);
+      const visible = selectedOrgans();
+      ctx.save();
+      ctx.translate(body.center.x, body.center.y);
+      ctx.transform(body.horizontal.x * body.unit, body.horizontal.y * body.unit,
+        body.vertical.x * body.length, body.vertical.y * body.length, 0, 0);
+      for (const organ of visible) {
+        const entry = sprite(organ, currentView);
+        if (!entry.ready) continue;
+        const crop = entry.crop;
+        const fit = Math.min(organ.w / crop.w, organ.h / crop.h);
+        const dw = crop.w * fit, dh = crop.h * fit;
+        ctx.globalAlpha = .94;
+        ctx.drawImage(entry.image, crop.sx, crop.sy, crop.w, crop.h,
+          organ.x * body.projection - dw / 2, organ.y - dh / 2, dw, dh);
+        ctx.globalAlpha = 1;
+        const x = body.center.x + body.horizontal.x * organ.x * body.projection * body.unit + body.vertical.x * organ.y * body.length;
+        const y = body.center.y + body.horizontal.y * organ.x * body.projection * body.unit + body.vertical.y * organ.y * body.length;
+        hitSpots.push({ x, y, radius: Math.max(dw * body.unit, dh * body.length) * .55, organ });
+      }
+      ctx.restore();
+      if (labels) {
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'center';
+        for (const spot of hitSpots) {
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = '#111827';
+          ctx.strokeText(spot.organ.name, spot.x, spot.y);
+          ctx.fillStyle = 'white';
+          ctx.fillText(spot.organ.name, spot.x, spot.y);
+        }
+      }
+    }
+    function loadScript(url) {
+      return new Promise((resolve, reject) => {
+        const element = document.createElement('script');
+        element.src = url;
+        element.onload = resolve;
+        element.onerror = () => reject(new Error(`Falha ao carregar ${url}`));
+        document.head.append(element);
+      });
+    }
+    async function loadPose() {
+      if (pose) return;
+      status('Carregando reconhecimento…');
+      if (!window.Pose) {
+        let lastError;
+        for (const url of [
+          'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js',
+          'https://unpkg.com/@mediapipe/pose@0.5.1675469404/pose.js'
+        ]) {
+          try { await loadScript(url); if (window.Pose) break; } catch (error) { lastError = error; }
+        }
+        if (!window.Pose) throw lastError || new Error('MediaPipe não carregou');
+      }
+      pose = new window.Pose({ locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}` });
+      pose.setOptions({ modelComplexity: 0, smoothLandmarks: true, enableSegmentation: false,
+        minDetectionConfidence: .5, minTrackingConfidence: .5 });
+      pose.onResults(result => { landmarks = result.poseLandmarks || null; });
+      await pose.initialize();
+    }
+    async function startCamera() {
+      const button = $('#start');
+      button.disabled = true;
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error('Acesso à câmera indisponível neste navegador.');
+        if (stream) stream.getTracks().forEach(track => track.stop());
+        stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: {
+          facingMode: { ideal: frontCamera ? 'user' : 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 }
+        } });
+        video.srcObject = stream;
+        await video.play();
+        demo = false;
+        stage.classList.remove('demo');
+        manual = false;
+        smoothedYaw = null;
+        $('#rotation-mode').textContent = '🔄 Ângulo: automático';
+        $('#rotation-mode').disabled = false;
+        $('#angle-controls').hidden = true;
+        button.textContent = '↻ Reiniciar câmera';
+        status('Câmera ativa', 'Preparando o reconhecimento corporal…');
+        resize();
+        try {
+          await loadPose();
+          trackingReady = true;
+          status('Reconhecimento ativo', 'Mostre cabeça, ombros e quadris. Se o ângulo falhar, ative o controle manual.');
+        } catch (error) {
+          trackingReady = false;
+          status('Câmera ativa — sem rastreamento', `Falha ao carregar MediaPipe: ${error.message}`);
+          console.error(error);
+        }
+      } catch (error) {
+        status('Erro na câmera', `${error.name}: ${error.message}`);
+        console.error(error);
+      } finally { button.disabled = false; }
+    }
+    function showDemo() {
+      if (stream) stream.getTracks().forEach(track => track.stop());
+      stream = null;
+      video.srcObject = null;
+      landmarks = null;
+      demo = true;
+      manual = true;
+      stage.classList.add('demo');
+      $('#rotation-mode').textContent = '🔄 Ângulo: manual';
+      $('#rotation-mode').disabled = true;
+      $('#angle-controls').hidden = false;
+      $('#start').textContent = '📷 Iniciar câmera';
+      status('Modo demonstração', 'Arraste o controle de vista para girar o corpo e os órgãos juntos.');
+      draw(performance.now());
+    }
+    async function loop(t) {
+      requestAnimationFrame(loop);
+      if (t - lastFrame < 90) return;
+      lastFrame = t;
+      if (!demo && trackingReady && !sending && video.readyState >= 2) {
+        sending = true;
+        try { await pose.send({ image: video }); }
+        catch (error) { trackingReady = false; status('Erro no rastreamento', error.message); }
+        finally { sending = false; }
+      }
+      draw(t);
+    }
+    canvas.addEventListener('click', event => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left, y = event.clientY - rect.top;
+      const hit = [...hitSpots].reverse().find(spot => Math.hypot(spot.x - x, spot.y - y) < spot.radius);
+      if (hit) $('#detail').textContent = `${hit.organ.name}: ${hit.organ.info}`;
+    });
+    $('#start').addEventListener('click', startCamera);
+    $('#demo').addEventListener('click', showDemo);
+    $('#switch').addEventListener('click', () => { frontCamera = !frontCamera; mirrored = frontCamera; setMirror(); startCamera(); });
+    function setMirror() {
+      video.classList.toggle('mirror', mirrored);
+      $('#mirror').textContent = `🪞 Espelhar: ${mirrored ? 'sim' : 'não'}`;
+    }
+    $('#mirror').addEventListener('click', () => { mirrored = !mirrored; setMirror(); draw(performance.now()); });
+    $('#labels').addEventListener('click', () => {
+      labels = !labels;
+      $('#labels').textContent = `🏷️ Nomes: ${labels ? 'sim' : 'não'}`;
+      draw(performance.now());
+    });
+    $('#organ-filter').addEventListener('change', () => draw(performance.now()));
+    $('#rotation-mode').addEventListener('click', () => {
+      if (!manual) manualView = currentView;
+      manual = !manual;
+      if (demo) manual = true;
+      $('#rotation-mode').textContent = `🔄 Ângulo: ${manual ? 'manual' : 'automático'}`;
+      $('#angle-controls').hidden = !manual;
+      if (!manual) smoothedYaw = null;
+      draw(performance.now());
+    });
+    $('#angle-slider').addEventListener('input', event => {
+      manualView = Number(event.target.value);
+      draw(performance.now());
+    });
+    window.addEventListener('pagehide', () => { if (stream) stream.getTracks().forEach(track => track.stop()); });
+    setMirror();
+    resize();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

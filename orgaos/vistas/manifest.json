@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "status": "rascunhos-v1.5-pendentes-de-revisao",
+  "angles": [
+    { "index": 1, "degrees": 0, "key": "frente", "file": "01-frente.png" },
+    { "index": 2, "degrees": 45, "key": "diagonal-frontal-esquerda", "file": "02-diagonal-frontal-esquerda.png" },
+    { "index": 3, "degrees": 90, "key": "lateral-esquerda", "file": "03-lateral-esquerda.png" },
+    { "index": 4, "degrees": 135, "key": "diagonal-traseira-esquerda", "file": "04-diagonal-traseira-esquerda.png" },
+    { "index": 5, "degrees": 180, "key": "costas", "file": "05-costas.png" },
+    { "index": 6, "degrees": 225, "key": "diagonal-traseira-direita", "file": "06-diagonal-traseira-direita.png" },
+    { "index": 7, "degrees": 270, "key": "lateral-direita", "file": "07-lateral-direita.png" },
+    { "index": 8, "degrees": 315, "key": "diagonal-frontal-direita", "file": "08-diagonal-frontal-direita.png" }
+  ],
+  "organs": [
+    "baco",
+    "bexiga",
+    "cerebro",
+    "coracao",
+    "delgado",
+    "estomago",
+    "figado",
+    "grosso",
+    "pancreas",
+    "pulmao_direito",
+    "pulmao_esquerdo",
+    "rim_direito",
+    "rim_esquerdo"
+  ],
+  "legacyPairedOrgans": ["pulmao", "rins"]
+}
