@@ -83,8 +83,8 @@ run('manualView = "front"; draw(0); manualView = "back"; draw(0)');
 const ids = run('organs.map(organ => organ.id).join(",")').split(',');
 assert.equal(ids.length, 13);
 const adjustedSizes = {
-  coracao: [.28, .23], figado: [.47, .25], estomago: [.31, .23],
-  grosso: [.50, .28], delgado: [.32, .21], pancreas: [.26, .12]
+  coracao: [.38, .31], figado: [.61, .33], estomago: [.42, .31],
+  grosso: [.66, .37], delgado: [.43, .28], pancreas: [.26, .12]
 };
 for (const [id, [width, height]] of Object.entries(adjustedSizes)) {
   const organ = run(`organs.find(item => item.id === "${id}")`);

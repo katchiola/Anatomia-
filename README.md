@@ -4,13 +4,13 @@ Aplicativo web educativo de anatomia em realidade aumentada. Usa a câmera do ce
 
 ## Versão atual
 
-**1.5.5 (publicada; revisão visual no celular pendente)**
+**1.5.6 (publicada; revisão visual no celular pendente)**
 
-O arquivo `index.html` da raiz é a versão ativa, publicada no GitHub Pages como 1.5.5. As revisões 1.5.2 e 1.5.3 ficaram preservadas localmente, mas não foram publicadas. As versões anteriores continuam disponíveis no histórico do GitHub e nas cópias locais em `versoes/` e `pacotes/`.
+O arquivo `index.html` da raiz é a versão ativa, publicada no GitHub Pages como 1.5.6. As revisões 1.5.2 e 1.5.3 ficaram preservadas localmente, mas não foram publicadas. As versões anteriores continuam disponíveis no histórico do GitHub e nas cópias locais em `versoes/` e `pacotes/`.
 
-A versão 1.5.5 mostra apenas frente e costas para os 13 órgãos. No modo câmera, a ordem dos pontos visíveis da cabeça, dos ombros e dos quadris indica a orientação; ao ficar de lado, o app mantém a última vista. A troca para costas usa as imagens posteriores e inverte a posição dos órgãos no corpo. Também há correção manual e demonstração sem câmera.
+A versão 1.5.6 mostra apenas frente e costas para os 13 órgãos. No modo câmera, a ordem dos pontos visíveis da cabeça, dos ombros e dos quadris indica a orientação; ao ficar de lado, o app mantém a última vista. A troca para costas usa as imagens posteriores e inverte a posição dos órgãos no corpo. Também há correção manual e demonstração sem câmera.
 
-Todos os 13 órgãos aparecem por padrão, inclusive pâncreas, baço, bexiga e os dois rins. Coração, fígado, estômago e intestinos foram ampliados, enquanto o pâncreas foi reduzido conforme o teste visual da versão anterior. Os centros foram mantidos nas regiões do tórax, abdome e pelve. Os nomes começam ocultos para não cobrir o corpo; é possível ativá-los, tocar em um órgão para conhecer sua função ou isolá-lo no menu. Se a pessoa estiver pequena na imagem, o aplicativo recomenda aproximá-la da câmera.
+Todos os 13 órgãos aparecem por padrão, inclusive pâncreas, baço, bexiga e os dois rins. Após a foto da versão 1.5.5, coração, fígado, estômago e intestinos receberam um aumento adicional de aproximadamente 30% a 35%. O fígado foi ligeiramente centralizado; o pâncreas manteve o tamanho aprovado. Os nomes começam ocultos para não cobrir o corpo; é possível ativá-los, tocar em um órgão para conhecer sua função ou isolá-lo no menu. Se a pessoa estiver pequena na imagem, o aplicativo recomenda aproximá-la da câmera.
 
 Ao aproximar a câmera, a escala do cérebro acompanha a largura da cabeça; os órgãos do tronco acompanham os ombros quando os quadris saem da imagem, ou os quadris quando os ombros saem. Se nenhuma dessas referências for detectada, o app mostra uma orientação para afastar um pouco a câmera. Essa aproximação depende de o MediaPipe continuar reconhecendo os pontos visíveis; ainda precisa de validação no celular.
 

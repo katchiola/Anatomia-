@@ -81,8 +81,14 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - A vista frente/costas pode ser inferida também por um par de pontos visíveis, e o app informa quando a câmera está próxima demais para reconhecer uma referência corporal.
 - Testes simulados confirmam aumento proporcional do cérebro, pulmão e bexiga, além da seleção das 26 imagens de frente/costas. Publicada no GitHub; a câmera real ainda precisa de teste no celular.
 
-### 1.5.5 — atual, publicada; revisão visual no celular pendente
+### 1.5.5 — publicada; preservada
 
 - Após a foto de teste da versão 1.5.4, coração, fígado, estômago e intestinos grosso e delgado foram ampliados; o pâncreas foi reduzido.
 - Os centros dos órgãos foram mantidos para preservar o posicionamento alcançado na versão anterior.
 - Testes automatizados confirmam as seis proporções ajustadas, os 13 órgãos, as vistas de frente e costas e a ampliação em closes. A aparência com câmera real ainda precisa de conferência no celular.
+
+### 1.5.6 — atual, publicada; revisão visual no celular pendente
+
+- A foto de teste da 1.5.5 mostrou que a ampliação anterior ainda era discreta. Coração, fígado, estômago, intestino grosso e intestino delgado foram ampliados em aproximadamente 30% a 35% adicionais.
+- O fígado foi deslocado levemente para o centro para permanecer dentro da largura do tronco. O pâncreas manteve o tamanho da 1.5.5, aprovado no teste visual.
+- Testes automatizados passaram para tamanhos, 13 órgãos, vistas de frente/costas e ampliação em closes. A proporção final ainda precisa de nova conferência com câmera real.
