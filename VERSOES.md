@@ -9,7 +9,7 @@
 5. Depois de testar, copie os arquivos finais para `versoes/v<novo-numero>/`.
 6. Atualize `VERSAO_ATUAL`, este histórico e o número mostrado no aplicativo.
 7. Gere um ZIP em `pacotes/` quando a versão for concluída.
-8. Só então publique o `index.html`, a documentação e os recursos da versão no GitHub.
+8. Após comparar e informar as diferenças, publique o `index.html`, a documentação e os recursos da versão no GitHub; confira que o número exibido no site corresponde à versão enviada.
 
 Se uma versão nova apresentar erro, restaure o `index.html` da última pasta estável em `versoes/`.
 
@@ -55,7 +55,28 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - Em 23/10/2026, foram corrigidas parcialmente vistas do pulmão direito e cérebro; as sequências anteriores foram arquivadas. A tentativa de corrigir a bexiga foi preservada, mas não incorporada por criar uma descontinuidade. A prévia agora mostra qualquer um dos 13 órgãos ou conjuntos sincronizados. As pendências restantes estão registradas em `orgaos/vistas/REVISAO-2026-10-23.md`.
 - Integração local: 13 órgãos com oito vistas, escolha automática aproximada pelo giro do tronco, controle manual, demonstração sem câmera, seleção de órgãos e carregamento de imagens sob demanda. Testes automatizados de sintaxe, caminhos das 104 imagens e seleção de ângulos passaram; a câmera no celular ainda precisa de teste humano.
 
-### 1.5.1 — atual, publicada; teste no celular pendente
+### 1.5.1 — publicada; troca de ângulos reprovada no teste com celular
 
 - Ao ativar o controle manual durante o uso da câmera, mantém a vista que estava selecionada automaticamente, evitando um salto para a frente.
-- Preservada em `versoes/v1.5.1/` com todos os 104 PNGs e publicada no GitHub Pages. A câmera e o alinhamento ainda precisam de validação em um celular.
+- Preservada em `versoes/v1.5.1/` com todos os 104 PNGs e publicada no GitHub Pages. O teste do usuário mostrou que a mudança de lado e a vista de costas não funcionavam bem.
+
+### 1.5.2 — preservada localmente, aguardando teste no celular
+
+- Removidas do aplicativo as seis opções laterais e diagonais: agora há somente frente e costas.
+- A detecção automática usa a ordem dos ombros e quadris, mantém a última vista quando a pessoa está de lado e exige três leituras estáveis antes de trocar de frente para costas ou vice-versa.
+- Ao selecionar costas, usa `05-costas.png` para cada órgão, inverte a posição anatômica no corpo sem espelhar novamente a ilustração posterior e mantém a correção manual.
+- Teste automatizado confirma os 13 órgãos, as 26 imagens usadas, a troca automática e a preservação das imagens antigas. Falta repetir o teste no celular; o GitHub Pages permanece na 1.5.1.
+
+### 1.5.3 — preservada localmente, aguardando teste no celular
+
+- Após fotos do teste da 1.5.1, todos os 13 órgãos passaram a aparecer por padrão; o filtro antigo exibia somente oito órgãos principais e ocultava pâncreas, baço, bexiga e os dois rins.
+- Desenhos menores e posições relativas ajustadas: pulmões e coração no tórax, órgãos digestivos no abdome superior, rins posteriormente no abdome superior, intestinos abaixo e bexiga na pelve.
+- Nomes começam ocultos para evitar sobreposição; o usuário pode ativá-los, tocar no órgão ou isolá-lo pelo menu. Quando a pessoa está distante, o app recomenda aproximá-la da câmera.
+- Testes automatizados de seleção, caminhos das 26 imagens, posições relativas e troca frente/costas passaram. A câmera real ainda precisa de um novo teste no celular. Não publicada no GitHub.
+
+### 1.5.4 — atual, publicada; teste no celular pendente
+
+- O cérebro passa a usar o tamanho e a posição das orelhas ou dos olhos quando a cabeça está próxima da câmera.
+- Os órgãos do tronco continuam escalando quando somente os ombros ou somente os quadris estão visíveis; a posição do restante do tronco é estimada a partir do par disponível.
+- A vista frente/costas pode ser inferida também por um par de pontos visíveis, e o app informa quando a câmera está próxima demais para reconhecer uma referência corporal.
+- Testes simulados confirmam aumento proporcional do cérebro, pulmão e bexiga, além da seleção das 26 imagens de frente/costas. Publicada no GitHub; a câmera real ainda precisa de teste no celular.

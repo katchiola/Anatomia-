@@ -1,6 +1,6 @@
 # Vistas dos órgãos
 
-Conjunto de ilustrações geradas a partir das referências originais da pasta `orgaos/` para uso futuro no aplicativo Anatomia Mágica.
+Conjunto de ilustrações geradas a partir das referências originais da pasta `orgaos/` para o aplicativo Anatomia Mágica. Na versão 1.5.4, somente `01-frente.png` e `05-costas.png` de cada órgão são carregados; as demais vistas permanecem guardadas para revisão e restauração.
 
 Cada conjunto possui oito arquivos PNG com transparência, numerados na ordem de rotação pretendida ao redor do corpo. `Esquerda` e `direita` referem-se sempre ao lado anatômico da pessoa, não ao lado da tela:
 
@@ -41,4 +41,4 @@ O mesmo processo foi aplicado ao `pulmao_esquerdo/` e ao `rim_esquerdo/`, manten
 
 Abra `previsualizar-rotacao.html` para percorrer manualmente ou reproduzir os oito ângulos dos quatro órgãos.
 
-**Estado: revisão visual, ainda não integrado ao aplicativo.** Os quatro conjuntos agora distinguem frente, perfis, diagonais e costas, mas foram gerados como ilustrações separadas: não há uma geometria 3D única que garanta continuidade perfeita ou precisão anatômica. Antes da integração, conferir cada sequência em movimento e submeter a anatomia a revisão especializada. Estas ilustrações educativas de IA não são material clínico validado.
+**Estado atual: integrado como ilustração educativa, ainda em revisão.** Os conjuntos distinguem frente, perfis, diagonais e costas, mas foram gerados como ilustrações separadas: não há uma geometria 3D única que garanta continuidade perfeita ou precisão anatômica. O aplicativo usa apenas frente e costas; a prévia acima continua mostrando a biblioteca completa. Estas ilustrações de IA não são material clínico validado.
