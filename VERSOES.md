@@ -74,9 +74,15 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - Nomes começam ocultos para evitar sobreposição; o usuário pode ativá-los, tocar no órgão ou isolá-lo pelo menu. Quando a pessoa está distante, o app recomenda aproximá-la da câmera.
 - Testes automatizados de seleção, caminhos das 26 imagens, posições relativas e troca frente/costas passaram. A câmera real ainda precisa de um novo teste no celular. Não publicada no GitHub.
 
-### 1.5.4 — atual, publicada; teste no celular pendente
+### 1.5.4 — publicada; preservada
 
 - O cérebro passa a usar o tamanho e a posição das orelhas ou dos olhos quando a cabeça está próxima da câmera.
 - Os órgãos do tronco continuam escalando quando somente os ombros ou somente os quadris estão visíveis; a posição do restante do tronco é estimada a partir do par disponível.
 - A vista frente/costas pode ser inferida também por um par de pontos visíveis, e o app informa quando a câmera está próxima demais para reconhecer uma referência corporal.
 - Testes simulados confirmam aumento proporcional do cérebro, pulmão e bexiga, além da seleção das 26 imagens de frente/costas. Publicada no GitHub; a câmera real ainda precisa de teste no celular.
+
+### 1.5.5 — atual, publicada; revisão visual no celular pendente
+
+- Após a foto de teste da versão 1.5.4, coração, fígado, estômago e intestinos grosso e delgado foram ampliados; o pâncreas foi reduzido.
+- Os centros dos órgãos foram mantidos para preservar o posicionamento alcançado na versão anterior.
+- Testes automatizados confirmam as seis proporções ajustadas, os 13 órgãos, as vistas de frente e costas e a ampliação em closes. A aparência com câmera real ainda precisa de conferência no celular.

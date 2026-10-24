@@ -82,6 +82,15 @@ run('manualView = "front"; draw(0); manualView = "back"; draw(0)');
 
 const ids = run('organs.map(organ => organ.id).join(",")').split(',');
 assert.equal(ids.length, 13);
+const adjustedSizes = {
+  coracao: [.28, .23], figado: [.47, .25], estomago: [.31, .23],
+  grosso: [.50, .28], delgado: [.32, .21], pancreas: [.26, .12]
+};
+for (const [id, [width, height]] of Object.entries(adjustedSizes)) {
+  const organ = run(`organs.find(item => item.id === "${id}")`);
+  assert.equal(organ.w, width, `${id}: largura ajustada.`);
+  assert.equal(organ.h, height, `${id}: altura ajustada.`);
+}
 for (const id of ['pancreas', 'baco', 'bexiga', 'rim_direito', 'rim_esquerdo']) {
   assert.ok(ids.includes(id), `${id} deve estar disponível no filtro inicial.`);
 }
@@ -176,4 +185,4 @@ assert.ok(run('hitSpots[0].radius') > brainRadius * 1.9,
 run('landmarks = null; draw(0)');
 assert.match(element('hint').textContent, /afaste um pouco a câmera/);
 
-console.log('OK: 13 órgãos, frente/costas e ampliação em closes da cabeça, do tórax e da barriga.');
+console.log('OK: 13 órgãos, proporções ajustadas, frente/costas e ampliação em closes.');
