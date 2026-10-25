@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prévia das imagens musculares — Anatomia Mágica</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,sans-serif;color:#edf1fa;background:#111827}
+    *{box-sizing:border-box}body{max-width:1180px;margin:auto;padding:20px}
+    h1{font-size:1.5rem;margin:0 0 8px}p{color:#cbd5e1;line-height:1.5}
+    .note{background:#243149;border-left:4px solid #fbbf24;border-radius:8px;padding:12px 16px;margin:16px 0 20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
+    article{background:#1e293b;border:1px solid #334155;border-radius:14px;overflow:hidden}
+    h2{font-size:1.1rem;margin:14px 14px 4px}small{display:block;color:#cbd5e1;margin:0 14px 12px}
+    .pair{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#475569}
+    figure{margin:0;background:#334155}figcaption{padding:9px;text-align:center;font-size:.9rem}
+    img{width:100%;height:250px;object-fit:contain;display:block;background-color:#dde4ed;
+      background-image:linear-gradient(45deg,#adb8c5 25%,transparent 25%),linear-gradient(-45deg,#adb8c5 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#adb8c5 75%),linear-gradient(-45deg,transparent 75%,#adb8c5 75%);
+      background-position:0 0,0 14px,14px -14px,-14px 0;background-size:28px 28px}
+    .ok{color:#86efac}.pending{color:#fcd34d}
+  </style>
+</head>
+<body>
+  <h1>Imagens musculares — vistas finais</h1>
+  <p>Dezoito imagens, com vista de frente e de costas para cada uma das nove regiões. O fundo quadriculado revela quais peças têm transparência suficiente para aparecer sobre a câmera.</p>
+  <div class="note">As peças aparecem sobre o fundo quadriculado sem retângulos. No aplicativo, acompanham os pontos do corpo. A escala final ainda precisa de teste com câmera real.</div>
+  <main class="grid" id="grid"></main>
+  <script>
+    const regions=[
+      ['rosto','Rosto','frente e costas'],
+      ['torax','Tórax','frente e costas'],
+      ['abdome','Abdome','frente e costas'],
+      ['braco','Braço','frente e costas'],
+      ['antebraco','Antebraço','frente e costas'],
+      ['coxa','Coxa','frente e costas'],
+      ['perna','Perna','frente e costas'],
+      ['maos','Mãos','frente e costas'],
+      ['pe','Pé','frente e costas']
+    ];
+    const grid=document.getElementById('grid');
+    for(const [folder,name,status] of regions){
+      const article=document.createElement('article');
+      const title=document.createElement('h2'); title.textContent=name; article.append(title);
+      const detail=document.createElement('small'); detail.textContent=status; detail.className='ok';article.append(detail);
+      const pair=document.createElement('div');pair.className='pair';
+      for(const [file,label] of [['01-frente.png','Frente'],['05-costas.png','Costas']]){
+        const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
+        img.src=`vistas/${folder}/${file}`;img.alt=`${name}, vista de ${label.toLowerCase()}`;img.loading='lazy';caption.textContent=label;
+        figure.append(img,caption);pair.append(figure);
+      }
+      article.append(pair);grid.append(article);
+    }
+  </script>
+</body>
+</html>

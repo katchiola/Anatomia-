@@ -4,11 +4,13 @@ Aplicativo web educativo de anatomia em realidade aumentada. Usa a câmera do ce
 
 ## Versão atual
 
-**3.0 (teste local concluído; validação com a câmera do celular pendente)**
+**3.1 (teste local concluído; validação com a câmera do celular pendente)**
 
-O arquivo `index.html` da raiz é a versão ativa. A versão 2.0.2 permanece preservada em `versoes/v2.0.2/` e no ZIP respectivo. As versões anteriores continuam disponíveis nas cópias locais em `versoes/` e `pacotes/` e no histórico do GitHub.
+O arquivo `index.html` da raiz é a versão ativa. A versão 3.0 permanece preservada em `versoes/v3.0/` e no ZIP respectivo. As versões anteriores continuam disponíveis nas cópias locais em `versoes/` e `pacotes/` e no histórico do GitHub.
 
-A versão 3.0 acrescenta **Músculos** ao seletor de sistemas. Os três modos aparecem separadamente, sem reiniciar a câmera. O novo modo mostra 36 grupos musculares no catálogo: 20 na vista frontal e 18 na posterior, incluindo os dois deltoides em ambas. Há nove regiões para filtrar e cada grupo pode ser tocado para mostrar nome e função. Cabeça, tronco, braços e pernas acompanham os pontos corporais usados pelo esqueleto; músculos sem referências visíveis deixam de aparecer. Os desenhos são esquemáticos e feitos pelo próprio aplicativo, sem imagens externas. Consulte `musculos/README.md`.
+A versão 3.1 substitui os desenhos esquemáticos do modo Músculos por 18 imagens anatômicas: frente e costas para rosto, tórax, abdome, braço, antebraço, coxa, perna, mão e pé. Elas formam 15 peças no corpo, com membros direito e esquerdo espelhados. As peças seguem as articulações reconhecidas e podem ser filtradas por nove regiões. Os originais estão em `musculos/rascunhos/vistas/`, as imagens transparentes otimizadas usadas no aplicativo estão em `musculos/vistas/`, e `musculos/previsualizar.html` mostra ambas as vistas.
+
+A versão 3.0 acrescentou **Músculos** ao seletor de sistemas, com desenhos esquemáticos feitos pelo aplicativo. Os três modos aparecem separadamente, sem reiniciar a câmera. Cabeça, tronco, braços e pernas acompanham os pontos corporais usados pelo esqueleto; peças sem referências visíveis deixam de aparecer. Consulte `musculos/README.md` para a versão atual das imagens.
 
 A versão 2.0 acrescenta o seletor **Sistema: Órgãos | Ossos**. Só um sistema é desenhado por vez. No modo Ossos, há um esqueleto de 16 peças distribuídas em nove setores, com imagens próprias de frente e costas. Crânio e mandíbula são separados; o botão **Abrir/fechar boca** move a mandíbula na vista frontal. O botão **Articulações** mostra pontos de ligação. Na câmera, cada úmero segue ombro e cotovelo, cada antebraço segue cotovelo e punho, cada fêmur segue quadril e joelho, e cada perna segue joelho e tornozelo. Mãos e pés usam os pontos aproximados disponíveis. Se algum ponto faltar, apenas as peças dependentes dele deixam de aparecer.
 
@@ -33,7 +35,7 @@ As ilustrações ainda são rascunhos. As outras seis vistas por órgão permane
 - `pacotes/`: arquivos ZIP das versões preservadas localmente.
 - `orgaos/`: imagens e referências visuais para evolução dos órgãos.
 - `ossos/`: 16 peças visuais com frente e costas, demonstração e arquivos de orientação.
-- `musculos/`: desenho articulado dos grupos musculares nas vistas frontal e posterior.
+- `musculos/`: imagens e posicionamento articulado dos músculos nas vistas frontal e posterior.
 - `VERSOES.md`: histórico das versões e procedimento de atualização.
 - `VERSAO_ATUAL`: número da versão ativa.
 
@@ -41,7 +43,7 @@ As ilustrações ainda são rascunhos. As outras seis vistas por órgão permane
 
 Hospede o `index.html` por HTTPS, ou use `localhost`. Abra no Safari do iPhone ou Chrome do Android e permita o acesso à câmera.
 
-É necessária conexão com a internet para carregar o MediaPipe e seu modelo de reconhecimento corporal. Ao hospedar ou transferir o app, mantenha `orgaos/vistas/`, `ossos/vistas/`, `ossos/rig.js` e `musculos/rig.js` junto do `index.html`.
+É necessária conexão com a internet para carregar o MediaPipe e seu modelo de reconhecimento corporal. Ao hospedar ou transferir o app, mantenha `orgaos/vistas/`, `ossos/vistas/`, `ossos/rig.js`, `musculos/vistas/` e `musculos/rig.js` junto do `index.html`.
 
 Para conferir os 13 órgãos e suas vistas, execute `node tests/vistas.test.cjs`. Para conferir os 16 ossos, execute `node tests/ossos.test.cjs`. Para conferir os músculos, as duas vistas e nove regiões, execute `node tests/musculos.test.cjs`.
 
@@ -49,4 +51,4 @@ Para conferir os 13 órgãos e suas vistas, execute `node tests/vistas.test.cjs`
 
 A câmera é processada no próprio aparelho pelo código do navegador. O aplicativo não possui contas, login ou servidor de armazenamento de imagens.
 
-As posições anatômicas são educativas e aproximadas. O rastreamento do corpo não mede a abertura da boca nem a contração muscular; a mandíbula tem controle manual, e os músculos seguem a posição dos segmentos corporais. Ainda é preciso conferir alinhamento, escala e desempenho da versão 3.0 com câmera real em um celular. O aplicativo não é uma ferramenta médica.
+As posições anatômicas são educativas e aproximadas. O rastreamento do corpo não mede a abertura da boca nem a contração muscular; a mandíbula tem controle manual, e os músculos seguem a posição dos segmentos corporais. Ainda é preciso conferir alinhamento, escala e desempenho da versão 3.1 com câmera real em um celular. O aplicativo não é uma ferramenta médica.

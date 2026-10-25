@@ -115,10 +115,18 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - O script dos ossos recebe um número de versão no endereço para evitar o uso de uma cópia antiga armazenada pelo navegador.
 - Prévia em largura de celular confirmou a diferença entre boca fechada e aberta; falta repetir com câmera real.
 
-### 3.0 — versão ativa; validação no celular pendente
+### 3.0 — preservada; validação no celular pendente
 
 - Adicionado o terceiro sistema **Músculos**, separado de Órgãos e Ossos, com troca sem reiniciar a câmera.
 - Desenhados 36 grupos musculares esquemáticos em nove regiões: 20 aparecem de frente e 18 de costas. Cada grupo pode ser selecionado pelo filtro ou tocado para mostrar sua função.
 - Braços, antebraços, coxas e pernas acompanham as mesmas articulações reconhecidas no modo Ossos. Cabeça e tronco usam os pontos disponíveis; em closes, os músculos visíveis continuam escalando pelas referências presentes.
 - A demonstração exibe uma silhueta muscular nas duas vistas. Os 13 órgãos e 16 ossos permanecem acessíveis em seus modos.
 - Testes locais passaram para as três modalidades, ambas as vistas, filtros, movimento dos membros e closes. A precisão visual com câmera real ainda precisa de conferência no celular.
+
+### 3.1 — versão ativa; validação no celular pendente
+
+- Substituídos os desenhos esquemáticos por 18 ilustrações musculares anatômicas transparentes: frente e costas para nove regiões.
+- As imagens formam 15 peças no corpo: rosto, tórax e abdome centrais, mais braços, antebraços, coxas, pernas, mãos e pés dos dois lados. Cada membro segue seus pontos articulares e a imagem é espelhada para o lado oposto.
+- Mantidos os modos Órgãos e Ossos separados, os filtros por região e a troca de vista frente/costas. A câmera continua ativa na troca de sistema.
+- Os originais das ilustrações foram preservados em `musculos/rascunhos/`; as cópias transparentes otimizadas para o aplicativo estão em `musculos/vistas/`.
+- Prévia e testes locais confirmaram as 18 imagens, as duas vistas, o movimento dos membros, os closes e os modos anteriores. A escala final com câmera real ainda precisa de conferência no celular.

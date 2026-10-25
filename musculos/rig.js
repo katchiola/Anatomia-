@@ -1,55 +1,35 @@
 (function (root) {
   'use strict';
 
+  // Cada região tem uma ilustração de frente e outra de costas.
   const parts = [
-    { id: 'masseter_esquerdo', name: 'Masseter esquerdo', sector: 'cabeca', views: ['front'], info: 'Ajuda a fechar a mandíbula durante a mastigação.' },
-    { id: 'masseter_direito', name: 'Masseter direito', sector: 'cabeca', views: ['front'], info: 'Ajuda a fechar a mandíbula durante a mastigação.' },
-    { id: 'nuca', name: 'Músculos da nuca', sector: 'cabeca', views: ['back'], info: 'Ajudam a sustentar e mover a cabeça.' },
-    { id: 'pescoco', name: 'Músculos do pescoço', sector: 'cabeca', views: ['front'], info: 'Participam da rotação e inclinação da cabeça.' },
-    { id: 'deltoide_esquerdo', name: 'Deltoide esquerdo', sector: 'ombros', views: ['front', 'back'], info: 'Eleva e afasta o braço do corpo.' },
-    { id: 'deltoide_direito', name: 'Deltoide direito', sector: 'ombros', views: ['front', 'back'], info: 'Eleva e afasta o braço do corpo.' },
-    { id: 'peitoral_esquerdo', name: 'Peitoral esquerdo', sector: 'torax', views: ['front'], info: 'Move o braço em direção ao peito.' },
-    { id: 'peitoral_direito', name: 'Peitoral direito', sector: 'torax', views: ['front'], info: 'Move o braço em direção ao peito.' },
-    { id: 'trapezio', name: 'Trapézio', sector: 'torax', views: ['back'], info: 'Move e estabiliza as escápulas e o pescoço.' },
-    { id: 'dorsal_esquerdo', name: 'Grande dorsal esquerdo', sector: 'torax', views: ['back'], info: 'Puxa o braço para trás e para baixo.' },
-    { id: 'dorsal_direito', name: 'Grande dorsal direito', sector: 'torax', views: ['back'], info: 'Puxa o braço para trás e para baixo.' },
-    { id: 'reto_abdominal', name: 'Reto abdominal', sector: 'abdomen', views: ['front'], info: 'Ajuda a flexionar o tronco e estabilizar o abdômen.' },
-    { id: 'obliquo_esquerdo', name: 'Oblíquo esquerdo', sector: 'abdomen', views: ['front'], info: 'Ajuda a girar e inclinar o tronco.' },
-    { id: 'obliquo_direito', name: 'Oblíquo direito', sector: 'abdomen', views: ['front'], info: 'Ajuda a girar e inclinar o tronco.' },
-    { id: 'lombar_esquerdo', name: 'Eretores da coluna esquerdos', sector: 'abdomen', views: ['back'], info: 'Ajudam a manter a coluna ereta.' },
-    { id: 'lombar_direito', name: 'Eretores da coluna direitos', sector: 'abdomen', views: ['back'], info: 'Ajudam a manter a coluna ereta.' },
-    { id: 'biceps_esquerdo', name: 'Bíceps esquerdo', sector: 'bracos', views: ['front'], info: 'Flexiona o cotovelo.' },
-    { id: 'biceps_direito', name: 'Bíceps direito', sector: 'bracos', views: ['front'], info: 'Flexiona o cotovelo.' },
-    { id: 'triceps_esquerdo', name: 'Tríceps esquerdo', sector: 'bracos', views: ['back'], info: 'Estende o cotovelo.' },
-    { id: 'triceps_direito', name: 'Tríceps direito', sector: 'bracos', views: ['back'], info: 'Estende o cotovelo.' },
-    { id: 'flexores_esquerdos', name: 'Flexores do antebraço esquerdo', sector: 'antebracos', views: ['front'], info: 'Ajudam a flexionar o punho e os dedos.' },
-    { id: 'flexores_direitos', name: 'Flexores do antebraço direito', sector: 'antebracos', views: ['front'], info: 'Ajudam a flexionar o punho e os dedos.' },
-    { id: 'extensores_esquerdos', name: 'Extensores do antebraço esquerdo', sector: 'antebracos', views: ['back'], info: 'Ajudam a estender o punho e os dedos.' },
-    { id: 'extensores_direitos', name: 'Extensores do antebraço direito', sector: 'antebracos', views: ['back'], info: 'Ajudam a estender o punho e os dedos.' },
-    { id: 'flexor_quadril_esquerdo', name: 'Flexores do quadril esquerdos', sector: 'quadril', views: ['front'], info: 'Ajudam a levantar a coxa.' },
-    { id: 'flexor_quadril_direito', name: 'Flexores do quadril direitos', sector: 'quadril', views: ['front'], info: 'Ajudam a levantar a coxa.' },
-    { id: 'gluteo_esquerdo', name: 'Glúteo esquerdo', sector: 'quadril', views: ['back'], info: 'Estende e estabiliza o quadril.' },
-    { id: 'gluteo_direito', name: 'Glúteo direito', sector: 'quadril', views: ['back'], info: 'Estende e estabiliza o quadril.' },
-    { id: 'quadriceps_esquerdo', name: 'Quadríceps esquerdo', sector: 'coxas', views: ['front'], info: 'Estende o joelho.' },
-    { id: 'quadriceps_direito', name: 'Quadríceps direito', sector: 'coxas', views: ['front'], info: 'Estende o joelho.' },
-    { id: 'isquiotibiais_esquerdos', name: 'Isquiotibiais esquerdos', sector: 'coxas', views: ['back'], info: 'Flexionam o joelho e ajudam a estender o quadril.' },
-    { id: 'isquiotibiais_direitos', name: 'Isquiotibiais direitos', sector: 'coxas', views: ['back'], info: 'Flexionam o joelho e ajudam a estender o quadril.' },
-    { id: 'tibial_esquerdo', name: 'Tibial anterior esquerdo', sector: 'pernas', views: ['front'], info: 'Eleva a ponta do pé.' },
-    { id: 'tibial_direito', name: 'Tibial anterior direito', sector: 'pernas', views: ['front'], info: 'Eleva a ponta do pé.' },
-    { id: 'panturrilha_esquerda', name: 'Panturrilha esquerda', sector: 'pernas', views: ['back'], info: 'Ajuda a ficar na ponta dos pés e impulsiona a marcha.' },
-    { id: 'panturrilha_direita', name: 'Panturrilha direita', sector: 'pernas', views: ['back'], info: 'Ajuda a ficar na ponta dos pés e impulsiona a marcha.' }
+    { id: 'rosto', asset: 'rosto', name: 'Rosto e nuca', sector: 'rosto', info: 'Músculos da expressão, mastigação e nuca movem a face e sustentam a cabeça.' },
+    { id: 'torax', asset: 'torax', name: 'Tórax e dorso', sector: 'torax', info: 'Peitorais, trapézio e músculos do dorso movimentam os braços e estabilizam o tronco.' },
+    { id: 'abdome', asset: 'abdome', name: 'Abdome e lombar', sector: 'abdome', info: 'Reto abdominal, oblíquos e músculos lombares flexionam, giram e sustentam o tronco.' },
+    { id: 'braco_esquerdo', asset: 'braco', name: 'Braço esquerdo', sector: 'bracos', info: 'Deltoide, bíceps, braquial e tríceps movimentam ombro e cotovelo.' },
+    { id: 'braco_direito', asset: 'braco', name: 'Braço direito', sector: 'bracos', info: 'Deltoide, bíceps, braquial e tríceps movimentam ombro e cotovelo.' },
+    { id: 'antebraco_esquerdo', asset: 'antebraco', name: 'Antebraço esquerdo', sector: 'antebracos', info: 'Flexores e extensores movimentam o punho e os dedos.' },
+    { id: 'antebraco_direito', asset: 'antebraco', name: 'Antebraço direito', sector: 'antebracos', info: 'Flexores e extensores movimentam o punho e os dedos.' },
+    { id: 'coxa_esquerda', asset: 'coxa', name: 'Coxa esquerda', sector: 'coxas', info: 'Quadríceps e músculos posteriores da coxa movimentam quadril e joelho.' },
+    { id: 'coxa_direita', asset: 'coxa', name: 'Coxa direita', sector: 'coxas', info: 'Quadríceps e músculos posteriores da coxa movimentam quadril e joelho.' },
+    { id: 'perna_esquerda', asset: 'perna', name: 'Perna esquerda', sector: 'pernas', info: 'Tibial anterior e panturrilha movimentam tornozelo e pé.' },
+    { id: 'perna_direita', asset: 'perna', name: 'Perna direita', sector: 'pernas', info: 'Tibial anterior e panturrilha movimentam tornozelo e pé.' },
+    { id: 'mao_esquerda', asset: 'maos', name: 'Mão esquerda', sector: 'maos', info: 'Músculos da palma e tendões ajudam a segurar e mover os dedos.' },
+    { id: 'mao_direita', asset: 'maos', name: 'Mão direita', sector: 'maos', info: 'Músculos da palma e tendões ajudam a segurar e mover os dedos.' },
+    { id: 'pe_esquerdo', asset: 'pe', name: 'Pé esquerdo', sector: 'pes', info: 'Músculos e tendões do pé ajudam no equilíbrio e no impulso ao caminhar.' },
+    { id: 'pe_direito', asset: 'pe', name: 'Pé direito', sector: 'pes', info: 'Músculos e tendões do pé ajudam no equilíbrio e no impulso ao caminhar.' }
   ];
   const sectors = [
-    ['todos', 'Musculatura completa'], ['cabeca', 'Cabeça e pescoço'],
-    ['ombros', 'Ombros'], ['torax', 'Peito e costas'], ['abdomen', 'Abdômen e lombar'],
-    ['bracos', 'Braços'], ['antebracos', 'Antebraços'], ['quadril', 'Quadril e glúteos'],
-    ['coxas', 'Coxas'], ['pernas', 'Pernas']
+    ['todos', 'Musculatura completa'], ['rosto', 'Rosto e nuca'],
+    ['torax', 'Tórax e dorso'], ['abdome', 'Abdome e lombar'],
+    ['bracos', 'Braços'], ['antebracos', 'Antebraços'], ['coxas', 'Coxas'],
+    ['pernas', 'Pernas'], ['maos', 'Mãos'], ['pes', 'Pés']
   ];
   const byId = Object.fromEntries(parts.map(part => [part.id, part]));
-  const visibleParts = (view, selected = 'todos') => parts.filter(part =>
-    part.views.includes(view) && (selected === 'todos' || part.sector === selected));
+  const visibleParts = (view, selected = 'todos') =>
+    ['front', 'back'].includes(view) ? parts.filter(part => selected === 'todos' || part.sector === selected) : [];
 
-  function render({ ctx, points, view, screenPoint, selected = 'todos' }) {
+  function render({ ctx, points, view, screenPoint, image, selected = 'todos' }) {
     const wanted = new Set(visibleParts(view, selected).map(part => part.id));
     const hits = [];
     const p = index => {
@@ -60,165 +40,101 @@
     };
     const mid = (a, b) => a && b ? { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } : null;
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+    function put(id, center, width, height, angle = 0, mirror = false) {
+      if (!wanted.has(id) || !center || width < 3 || height < 3) return;
+      const entry = image(byId[id].asset, view);
+      if (!entry || !entry.ready) return;
+      const crop = entry.crop || { sx: 0, sy: 0, w: entry.image.naturalWidth, h: entry.image.naturalHeight };
+      ctx.save();
+      ctx.translate(center.x, center.y);
+      ctx.rotate(angle);
+      if (mirror) ctx.scale(-1, 1);
+      ctx.globalAlpha = .94;
+      ctx.drawImage(entry.image, crop.sx, crop.sy, crop.w, crop.h,
+        -width / 2, -height / 2, width, height);
+      ctx.restore();
+      hits.push({ x: center.x, y: center.y, radius: Math.max(16, Math.min(width, height) * .55), organ: byId[id] });
+    }
+    function segment(id, start, end, widthRatio, heightRatio, mirror = false) {
+      if (!start || !end) return;
+      const length = dist(start, end);
+      if (length < 10) return;
+      put(id, mid(start, end), length * widthRatio, length * heightRatio,
+        Math.atan2(end.y - start.y, end.x - start.x) - Math.PI / 2, mirror);
+    }
+
     const leftShoulder = p(11), rightShoulder = p(12);
     const leftHip = p(23), rightHip = p(24);
     const shoulderPair = mid(leftShoulder, rightShoulder);
     const hipPair = mid(leftHip, rightHip);
-    const measuredShoulderWidth = leftShoulder && rightShoulder ? dist(leftShoulder, rightShoulder) : 0;
-    const measuredHipWidth = leftHip && rightHip ? dist(leftHip, rightHip) : 0;
+    const measuredShoulderWidth = shoulderPair ? dist(leftShoulder, rightShoulder) : 0;
+    const measuredHipWidth = hipPair ? dist(leftHip, rightHip) : 0;
     const shoulderWidth = measuredShoulderWidth || measuredHipWidth * 1.45;
-    const hipWidth = measuredHipWidth || measuredShoulderWidth * .73;
     const shoulders = shoulderPair || (hipPair && measuredHipWidth >= 18
       ? { x: hipPair.x, y: hipPair.y - measuredHipWidth * 2.4 } : null);
     const hips = hipPair || (shoulderPair && measuredShoulderWidth >= 18
       ? { x: shoulderPair.x, y: shoulderPair.y + measuredShoulderWidth * 1.6 } : null);
     const torso = shoulders && hips ? dist(shoulders, hips) : 0;
-    const side = [
-      { shoulder: leftShoulder, elbow: p(13), wrist: p(15), hip: leftHip, knee: p(25), ankle: p(27), suffix: 'esquerdo', legSuffix: 'esquerda' },
-      { shoulder: rightShoulder, elbow: p(14), wrist: p(16), hip: rightHip, knee: p(26), ankle: p(28), suffix: 'direito', legSuffix: 'direita' }
-    ];
 
-    function muscle(id, center, width, height, angle = 0, shape = 'spindle') {
-      if (!wanted.has(id) || !center || width < 3 || height < 3) return;
-      ctx.save();
-      ctx.translate(center.x, center.y);
-      ctx.rotate(angle);
-      const gradient = ctx.createLinearGradient(-width / 2, 0, width / 2, 0);
-      gradient.addColorStop(0, '#7f1d1d');
-      gradient.addColorStop(.27, '#dc564d');
-      gradient.addColorStop(.57, '#f28b72');
-      gradient.addColorStop(1, '#8d2824');
-      ctx.fillStyle = gradient;
-      ctx.strokeStyle = '#5b1f24';
-      ctx.lineWidth = Math.max(1, width * .045);
-      ctx.beginPath();
-      if (shape === 'fan') {
-        ctx.moveTo(0, -height / 2);
-        ctx.bezierCurveTo(width * .53, -height * .38, width * .63, height * .32, 0, height / 2);
-        ctx.bezierCurveTo(-width * .63, height * .32, -width * .53, -height * .38, 0, -height / 2);
-      } else if (shape === 'flat') {
-        ctx.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
-      } else {
-        ctx.moveTo(0, -height / 2);
-        ctx.bezierCurveTo(width * .47, -height * .32, width * .55, height * .19, width * .13, height / 2);
-        ctx.lineTo(-width * .13, height / 2);
-        ctx.bezierCurveTo(-width * .55, height * .19, -width * .47, -height * .32, 0, -height / 2);
-      }
-      ctx.closePath();
-      ctx.fill(); ctx.stroke();
-      ctx.strokeStyle = '#ffd0aa88';
-      ctx.lineWidth = Math.max(.8, width * .022);
-      ctx.beginPath();
-      ctx.moveTo(-width * .15, -height * .31);
-      ctx.quadraticCurveTo(-width * .25, 0, -width * .1, height * .3);
-      ctx.moveTo(width * .14, -height * .26);
-      ctx.quadraticCurveTo(width * .25, 0, width * .1, height * .26);
-      ctx.stroke();
-      ctx.strokeStyle = '#6c292cb3';
-      ctx.lineWidth = Math.max(.7, width * .018);
-      if (id === 'reto_abdominal') {
-        ctx.beginPath();
-        ctx.moveTo(0, -height * .43); ctx.lineTo(0, height * .42);
-        for (const y of [-.25, 0, .25]) {
-          ctx.moveTo(-width * .34, height * y);
-          ctx.quadraticCurveTo(0, height * (y + .06), width * .34, height * y);
-        }
-        ctx.stroke();
-      } else if (id.startsWith('peitoral_') || id === 'trapezio' || id.startsWith('dorsal_')) {
-        ctx.beginPath();
-        for (const x of [-.22, 0, .22]) {
-          ctx.moveTo(0, -height * .38);
-          ctx.quadraticCurveTo(width * x, 0, width * x * 1.45, height * .37);
-        }
-        ctx.stroke();
-      } else if (id.startsWith('quadriceps_') || id.startsWith('isquiotibiais_') ||
-          id.startsWith('panturrilha_')) {
-        ctx.beginPath();
-        for (const x of [-.18, .18]) {
-          ctx.moveTo(width * x, -height * .30);
-          ctx.quadraticCurveTo(width * x * 1.45, 0, width * x * .55, height * .30);
-        }
-        ctx.stroke();
-      }
-      ctx.restore();
-      hits.push({ x: center.x, y: center.y, radius: Math.max(16, Math.max(width, height) * .43), organ: byId[id] });
-    }
-    function segment(id, start, end, ratio, along = .5) {
-      if (!wanted.has(id) || !start || !end) return;
-      const length = dist(start, end);
-      if (length < 10) return;
-      const center = { x: start.x + (end.x - start.x) * along, y: start.y + (end.y - start.y) * along };
-      const angle = Math.atan2(end.y - start.y, end.x - start.x) - Math.PI / 2;
-      muscle(id, center, length * ratio, length * .82, angle);
-    }
-
-    if (shoulders && shoulderWidth >= 18) {
-      const neckTop = mid(p(7), p(8)) || mid(p(2), p(5)) || p(0);
-      if (neckTop) {
-        const neck = { x: (neckTop.x + shoulders.x) / 2, y: (neckTop.y + shoulders.y) / 2 };
-        muscle(view === 'front' ? 'pescoco' : 'nuca', neck,
-          shoulderWidth * .20, dist(neckTop, shoulders) * .62);
-      }
-      if (view === 'back') muscle('trapezio',
-        { x: shoulders.x, y: shoulders.y + Math.max(torso, shoulderWidth) * .16 },
-        shoulderWidth * .72, Math.max(torso * .32, shoulderWidth * .25), 0, 'fan');
-    }
-
-    if (view === 'front') {
-      const face = mid(p(7), p(8)) || mid(p(2), p(5));
-      const faceWidth = p(7) && p(8) ? dist(p(7), p(8)) :
-        p(2) && p(5) ? dist(p(2), p(5)) * 1.8 : 0;
-      if (face && faceWidth >= 12) {
-        const faceLeft = p(7) || p(2), faceRight = p(8) || p(5);
-        muscle('masseter_esquerdo', { x: face.x + (faceLeft?.x - face.x) * .78,
-          y: face.y + faceWidth * .28 }, faceWidth * .22, faceWidth * .35);
-        muscle('masseter_direito', { x: face.x + (faceRight?.x - face.x) * .78,
-          y: face.y + faceWidth * .28 }, faceWidth * .22, faceWidth * .35);
-      }
-    }
-
-    if (shoulders && hips && torso >= 20 && shoulderWidth >= 18) {
+    if (shoulders && hips && shoulderWidth >= 18 && torso >= 20) {
       if (view === 'front') {
-        for (const s of side) {
-          if (!s.shoulder) continue;
-          const x = shoulders.x + (s.shoulder.x - shoulders.x) * .43;
-          muscle(`peitoral_${s.suffix}`, { x, y: shoulders.y + torso * .23 },
-            shoulderWidth * .42, torso * .27, 0, 'fan');
-          muscle(`obliquo_${s.suffix}`, { x: shoulders.x + (s.shoulder.x - shoulders.x) * .72,
-            y: shoulders.y + torso * .65 }, shoulderWidth * .23, torso * .34);
-          if (s.hip) muscle(`flexor_quadril_${s.suffix}`, { x: hips.x + (s.hip.x - hips.x) * .70,
-            y: hips.y - torso * .03 }, hipWidth * .42, torso * .22);
-        }
-        muscle('reto_abdominal', { x: (shoulders.x + hips.x) / 2,
-          y: shoulders.y + torso * .63 }, shoulderWidth * .38, torso * .49, 0, 'flat');
+        put('torax', { x: shoulders.x + (hips.x - shoulders.x) * .24,
+          y: shoulders.y + (hips.y - shoulders.y) * .24 },
+        shoulderWidth * 1.04, torso * .54);
+        put('abdome', { x: shoulders.x + (hips.x - shoulders.x) * .74,
+          y: shoulders.y + (hips.y - shoulders.y) * .74 },
+        shoulderWidth * .80, torso * .58);
       } else {
-        for (const s of side) {
-          if (!s.shoulder) continue;
-          muscle(`dorsal_${s.suffix}`, { x: shoulders.x + (s.shoulder.x - shoulders.x) * .56,
-            y: shoulders.y + torso * .48 }, shoulderWidth * .38, torso * .57, 0, 'fan');
-          if (s.hip) {
-            muscle(`lombar_${s.suffix}`, { x: hips.x + (s.hip.x - hips.x) * .28,
-              y: shoulders.y + torso * .73 }, shoulderWidth * .18, torso * .32);
-            muscle(`gluteo_${s.suffix}`, { x: hips.x + (s.hip.x - hips.x) * .58,
-              y: hips.y + torso * .10 }, hipWidth * .64, torso * .30, 0, 'flat');
-          }
-        }
+        put('torax', { x: shoulders.x + (hips.x - shoulders.x) * .35,
+          y: shoulders.y + (hips.y - shoulders.y) * .35 },
+        shoulderWidth * 1.07, torso * .78);
+        put('abdome', { x: shoulders.x + (hips.x - shoulders.x) * .77,
+          y: shoulders.y + (hips.y - shoulders.y) * .77 },
+        shoulderWidth * .78, torso * .50);
       }
     }
 
-    for (const s of side) {
-      if (s.shoulder && s.elbow) {
-        const upper = dist(s.shoulder, s.elbow);
-        muscle(`deltoide_${s.suffix}`, { x: s.shoulder.x + (s.elbow.x - s.shoulder.x) * .16,
-          y: s.shoulder.y + (s.elbow.y - s.shoulder.y) * .16 }, upper * .43, upper * .42, 0, 'fan');
-        segment(`${view === 'front' ? 'biceps' : 'triceps'}_${s.suffix}`, s.shoulder, s.elbow, .32, .56);
+    const earLeft = p(7), earRight = p(8), eyeLeft = p(2), eyeRight = p(5);
+    const face = mid(earLeft, earRight) || mid(eyeLeft, eyeRight) || p(0);
+    const faceWidth = earLeft && earRight ? dist(earLeft, earRight) * 1.25 :
+      eyeLeft && eyeRight ? dist(eyeLeft, eyeRight) * 2.55 : shoulderWidth * .48;
+    if (face && faceWidth >= 12) {
+      put('rosto', { x: face.x,
+        y: face.y + faceWidth * (view === 'back' ? .34 : .03) },
+      faceWidth * (view === 'back' ? 1.08 : .98), faceWidth * (view === 'back' ? 1.38 : 1.00));
+    }
+
+    const sides = [
+      { shoulder: 11, elbow: 13, wrist: 15, finger: 19, hip: 23, knee: 25, ankle: 27, toe: 31,
+        arm: 'braco_esquerdo', forearm: 'antebraco_esquerdo', hand: 'mao_esquerda',
+        thigh: 'coxa_esquerda', shin: 'perna_esquerda', foot: 'pe_esquerdo', mirror: true },
+      { shoulder: 12, elbow: 14, wrist: 16, finger: 20, hip: 24, knee: 26, ankle: 28, toe: 32,
+        arm: 'braco_direito', forearm: 'antebraco_direito', hand: 'mao_direita',
+        thigh: 'coxa_direita', shin: 'perna_direita', foot: 'pe_direito', mirror: false }
+    ];
+    for (const side of sides) {
+      const shoulder = p(side.shoulder), elbow = p(side.elbow), wrist = p(side.wrist);
+      const hip = p(side.hip), knee = p(side.knee), ankle = p(side.ankle);
+      segment(side.arm, shoulder, elbow, .43, 1.05, side.mirror);
+      segment(side.forearm, elbow, wrist, .33, 1.03, side.mirror);
+      const finger = p(side.finger) || (elbow && wrist ? {
+        x: wrist.x + (wrist.x - elbow.x) * .38,
+        y: wrist.y + (wrist.y - elbow.y) * .38 } : null);
+      segment(side.hand, wrist, finger, .80, 1.12, side.mirror);
+      segment(side.thigh, hip, knee, .47, 1.04, side.mirror);
+      segment(side.shin, knee, ankle, .36, 1.04, side.mirror);
+      if (ankle && knee) {
+        const shinLength = dist(knee, ankle);
+        if (shinLength >= 12) {
+          const toe = p(side.toe);
+          const angle = toe ? Math.max(-.35, Math.min(.35,
+            Math.atan2(toe.x - ankle.x, Math.max(12, toe.y - ankle.y)) * .35)) : 0;
+          const height = shinLength * (view === 'back' ? .47 : .55);
+          put(side.foot, { x: ankle.x, y: ankle.y + height * .36 },
+            shinLength * .52, height, angle, side.mirror);
+        }
       }
-      segment(`${view === 'front' ? 'flexores' : 'extensores'}_${s.suffix === 'esquerdo' ? 'esquerdos' : 'direitos'}`,
-        s.elbow, s.wrist, .29, .46);
-      segment(`${view === 'front' ? 'quadriceps' : 'isquiotibiais'}_${s.suffix === 'esquerdo' ? 'esquerdo' : 'direito'}${view === 'back' ? 's' : ''}`,
-        s.hip, s.knee, .40, .48);
-      segment(view === 'front' ? `tibial_${s.suffix}` : `panturrilha_${s.legSuffix}`,
-        s.knee, s.ankle, view === 'front' ? .24 : .38, .45);
     }
     return hits;
   }

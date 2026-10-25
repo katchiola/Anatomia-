@@ -1,9 +1,9 @@
-# Músculos — Anatomia Mágica 3.0
+# Músculos — Anatomia Mágica 3.1
 
-O arquivo `rig.js` desenha os grupos musculares diretamente no Canvas do aplicativo. Cada peça tem nome, função, região e vista frontal ou posterior. O catálogo possui 36 grupos: 20 visíveis de frente e 18 de costas; os deltoides aparecem nas duas vistas. Os filtros abrangem nove regiões do corpo.
+O modo Músculos usa 18 ilustrações anatômicas, uma vista frontal e uma posterior para cada uma das nove regiões: rosto, tórax, abdome, braço, antebraço, coxa, perna, mão e pé. As imagens finais com transparência ficam em `vistas/`; os originais permanecem em `rascunhos/vistas/`. Abra `previsualizar.html` para comparar as duas vistas.
 
-O desenho segue os pontos da cabeça, dos ombros, cotovelos, punhos, quadris, joelhos e tornozelos fornecidos pelo MediaPipe Pose. Se um ponto necessário estiver ausente, a peça correspondente fica oculta. A câmera não mede contração muscular. Os desenhos mostram a localização geral dos grupos e não pretendem reproduzir todos os detalhes anatômicos.
+O arquivo `rig.js` posiciona 15 peças sobre o corpo: três peças centrais e seis pares de membros. Os pares usam as mesmas ilustrações espelhadas para o lado esquerdo e direito. Braços, antebraços, coxas e pernas acompanham ombros, cotovelos, punhos, quadris, joelhos e tornozelos reconhecidos pelo MediaPipe Pose. Mãos e pés seguem punhos e tornozelos, com auxílio dos pontos dos dedos quando disponíveis. Rosto e tronco usam as referências corporais visíveis, inclusive em closes.
 
-As funções de renderização são independentes das imagens dos ossos e dos órgãos. Assim, a troca de sistema mantém a câmera ativa e mostra somente o sistema escolhido. A vista frontal e a posterior têm conjuntos próprios de músculos.
+O seletor mantém nove regiões. Ao tocar numa peça, o aplicativo mostra o nome e a função geral dos músculos daquela região. Órgãos e ossos continuam em modos separados.
 
-Execute `node tests/musculos.test.cjs` para conferir catálogo, filtros, vistas, movimento dos membros e visibilidade em closes. A posição e a escala ainda precisam de avaliação com câmera real no celular.
+Execute `node tests/musculos.test.cjs` para conferir catálogo, arquivos, vistas, filtros, articulações e closes. As imagens são educativas; o encaixe final deve ser conferido com câmera real no celular.
