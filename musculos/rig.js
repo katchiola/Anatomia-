@@ -3,7 +3,7 @@
 
   // Cada região tem uma ilustração de frente e outra de costas.
   const parts = [
-    { id: 'rosto', asset: 'rosto', name: 'Rosto e nuca', sector: 'rosto', info: 'Músculos da expressão, mastigação e nuca movem a face e sustentam a cabeça.' },
+    { id: 'rosto', asset: 'rosto', name: 'Crânio e músculos da cabeça', sector: 'rosto', info: 'Músculos da expressão e mastigação aparecem sobre o crânio; os músculos posteriores ajudam a sustentar a cabeça.' },
     { id: 'torax', asset: 'torax', name: 'Tórax e dorso', sector: 'torax', info: 'Peitorais, trapézio e músculos do dorso movimentam os braços e estabilizam o tronco.' },
     { id: 'abdome', asset: 'abdome', name: 'Abdome e lombar', sector: 'abdome', info: 'Reto abdominal, oblíquos e músculos lombares flexionam, giram e sustentam o tronco.' },
     { id: 'braco_esquerdo', asset: 'braco', name: 'Braço esquerdo', sector: 'bracos', info: 'Deltoide, bíceps, braquial e tríceps movimentam ombro e cotovelo.' },
@@ -20,7 +20,7 @@
     { id: 'pe_direito', asset: 'pe', name: 'Pé direito', sector: 'pes', info: 'Músculos e tendões do pé ajudam no equilíbrio e no impulso ao caminhar.' }
   ];
   const sectors = [
-    ['todos', 'Musculatura completa'], ['rosto', 'Rosto e nuca'],
+    ['todos', 'Musculatura completa'], ['rosto', 'Crânio e cabeça'],
     ['torax', 'Tórax e dorso'], ['abdome', 'Abdome e lombar'],
     ['bracos', 'Braços'], ['antebracos', 'Antebraços'], ['coxas', 'Coxas'],
     ['pernas', 'Pernas'], ['maos', 'Mãos'], ['pes', 'Pés']
@@ -100,9 +100,9 @@
     const faceWidth = earLeft && earRight ? dist(earLeft, earRight) * 1.25 :
       eyeLeft && eyeRight ? dist(eyeLeft, eyeRight) * 2.55 : shoulderWidth * .48;
     if (face && faceWidth >= 12) {
-      put('rosto', { x: face.x,
-        y: face.y + faceWidth * (view === 'back' ? .34 : .03) },
-      faceWidth * (view === 'back' ? 1.08 : .98), faceWidth * (view === 'back' ? 1.38 : 1.00));
+      // A nova peça inclui a abóbada craniana. Ela começa acima das orelhas.
+      put('rosto', { x: face.x, y: face.y + faceWidth * .15 },
+        faceWidth * 1.05, faceWidth * (view === 'back' ? 1.35 : 1.50));
     }
 
     const sides = [

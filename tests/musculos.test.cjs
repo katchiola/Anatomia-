@@ -55,8 +55,20 @@ delete moved[14];
 assert.ok(!render(moved, 'front').some(hit => hit.organ.id === 'braco_direito'));
 
 const headOnly = front.map((point, index) => [0, 2, 5, 7, 8].includes(index) ? point : undefined);
-assert.deepEqual(render(headOnly, 'front').map(hit => hit.organ.id).sort(),
-  ['rosto']);
+drawn.length = 0;
+const frontHead = render(headOnly, 'front');
+assert.deepEqual(frontHead.map(hit => hit.organ.id), ['rosto']);
+assert.ok(frontHead[0].y - drawn[0][8] / 2 < front[7].y * 600 - 30,
+  'O crânio frontal deve começar acima das orelhas.');
+assert.ok(frontHead[0].y + drawn[0][8] / 2 > front[7].y * 600 + 45,
+  'O pescoço frontal deve alcançar a região acima do tórax.');
+const back = bones.demoLandmarks('back', 0);
+const backHeadOnly = back.map((point, index) => [0, 2, 5, 7, 8].includes(index) ? point : undefined);
+drawn.length = 0;
+const backHead = render(backHeadOnly, 'back');
+assert.deepEqual(backHead.map(hit => hit.organ.id), ['rosto']);
+assert.ok(backHead[0].y - drawn[0][8] / 2 < back[7].y * 600 - 25,
+  'O crânio posterior deve começar acima das orelhas.');
 const shouldersOnly = front.map((point, index) => [0, 2, 5, 7, 8, 11, 12, 13, 14, 15, 16].includes(index) ? point : undefined);
 assert.ok(render(shouldersOnly, 'front').some(hit => hit.organ.id === 'abdome'),
   'O abdômen deve manter escala quando os quadris saem da câmera.');
@@ -64,7 +76,7 @@ assert.ok(render(shouldersOnly, 'front').some(hit => hit.organ.id === 'abdome'),
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 assert.match(html, /<option value="muscles">Músculos<\/option>/);
 assert.match(html, /id="muscle-filter"/);
-assert.match(html, /<script src="musculos\/rig\.js\?v=3\.1"><\/script>/);
+assert.match(html, /<script src="musculos\/rig\.js\?v=3\.2"><\/script>/);
 assert.match(html, /systemMode === 'muscles'/);
 assert.match(html, /image: muscleSprite/);
 console.log('OK: 18 imagens, 15 peças, duas vistas, nove regiões, movimento e closes.');

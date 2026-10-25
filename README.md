@@ -4,9 +4,11 @@ Aplicativo web educativo de anatomia em realidade aumentada. Usa a câmera do ce
 
 ## Versão atual
 
-**3.1 (teste local concluído; validação com a câmera do celular pendente)**
+**3.2 (teste local concluído; validação com a câmera do celular pendente)**
 
-O arquivo `index.html` da raiz é a versão ativa. A versão 3.0 permanece preservada em `versoes/v3.0/` e no ZIP respectivo. As versões anteriores continuam disponíveis nas cópias locais em `versoes/` e `pacotes/` e no histórico do GitHub.
+O arquivo `index.html` da raiz é a versão ativa. A versão 3.1 permanece preservada em `versoes/v3.1/` e no ZIP respectivo. As versões anteriores continuam disponíveis nas cópias locais em `versoes/` e `pacotes/` e no histórico do GitHub.
+
+A versão 3.2 refaz a peça muscular da cabeça nas duas vistas: os músculos da face e da nuca agora aparecem sobre o crânio, com um pescoço curto ligando a peça ao tronco. O posicionamento sobre o rosto foi ajustado para incluir o topo da cabeça. As outras oito regiões musculares, os órgãos e os ossos permanecem disponíveis.
 
 A versão 3.1 substitui os desenhos esquemáticos do modo Músculos por 18 imagens anatômicas: frente e costas para rosto, tórax, abdome, braço, antebraço, coxa, perna, mão e pé. Elas formam 15 peças no corpo, com membros direito e esquerdo espelhados. As peças seguem as articulações reconhecidas e podem ser filtradas por nove regiões. Os originais estão em `musculos/rascunhos/vistas/`, as imagens transparentes otimizadas usadas no aplicativo estão em `musculos/vistas/`, e `musculos/previsualizar.html` mostra ambas as vistas.
 
@@ -51,4 +53,4 @@ Para conferir os 13 órgãos e suas vistas, execute `node tests/vistas.test.cjs`
 
 A câmera é processada no próprio aparelho pelo código do navegador. O aplicativo não possui contas, login ou servidor de armazenamento de imagens.
 
-As posições anatômicas são educativas e aproximadas. O rastreamento do corpo não mede a abertura da boca nem a contração muscular; a mandíbula tem controle manual, e os músculos seguem a posição dos segmentos corporais. Ainda é preciso conferir alinhamento, escala e desempenho da versão 3.1 com câmera real em um celular. O aplicativo não é uma ferramenta médica.
+As posições anatômicas são educativas e aproximadas. O rastreamento do corpo não mede a abertura da boca nem a contração muscular; a mandíbula tem controle manual, e os músculos seguem a posição dos segmentos corporais. Ainda é preciso conferir alinhamento, escala e desempenho da versão 3.2 com câmera real em um celular. O aplicativo não é uma ferramenta médica.

@@ -123,10 +123,17 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - A demonstração exibe uma silhueta muscular nas duas vistas. Os 13 órgãos e 16 ossos permanecem acessíveis em seus modos.
 - Testes locais passaram para as três modalidades, ambas as vistas, filtros, movimento dos membros e closes. A precisão visual com câmera real ainda precisa de conferência no celular.
 
-### 3.1 — versão ativa; validação no celular pendente
+### 3.1 — preservada; validação no celular pendente
 
 - Substituídos os desenhos esquemáticos por 18 ilustrações musculares anatômicas transparentes: frente e costas para nove regiões.
 - As imagens formam 15 peças no corpo: rosto, tórax e abdome centrais, mais braços, antebraços, coxas, pernas, mãos e pés dos dois lados. Cada membro segue seus pontos articulares e a imagem é espelhada para o lado oposto.
 - Mantidos os modos Órgãos e Ossos separados, os filtros por região e a troca de vista frente/costas. A câmera continua ativa na troca de sistema.
 - Os originais das ilustrações foram preservados em `musculos/rascunhos/`; as cópias transparentes otimizadas para o aplicativo estão em `musculos/vistas/`.
 - Prévia e testes locais confirmaram as 18 imagens, as duas vistas, o movimento dos membros, os closes e os modos anteriores. A escala final com câmera real ainda precisa de conferência no celular.
+
+### 3.2 — versão ativa; validação no celular pendente
+
+- Refeita a peça muscular da cabeça de frente e de costas: músculos da face e da nuca foram integrados ao crânio, com pescoço curto nas duas vistas.
+- Ajustados altura e posição da peça para mostrar o topo do crânio e aproximar o pescoço do tórax, inclusive na demonstração e nos closes.
+- As imagens originais novas foram preservadas em `musculos/rascunhos/cranio-v3.2/`; as duas imagens otimizadas substituíram apenas a peça da cabeça em `musculos/vistas/rosto/`.
+- Os demais músculos, os 13 órgãos e os 16 ossos seguem separados em seus modos. Testes locais passaram; o encaixe com câmera real ainda precisa ser conferido no celular.
