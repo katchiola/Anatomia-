@@ -102,8 +102,15 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - A mensagem de ajuda fica abaixo da área da imagem no modo Ossos para não encobrir os pés.
 - Testes locais passaram para os órgãos, ossos, setores, vistas, movimento dos membros e mandíbula. A montagem e o desempenho com a câmera real ainda precisam de teste no celular.
 
-### 2.0.1 — versão ativa; validação no celular pendente
+### 2.0.1 — preservada; abertura ainda discreta no teste do celular
 
 - A mandíbula fechada foi reposicionada abaixo dos dentes superiores. A abertura manual agora é visível e mantém as extremidades superiores próximas às articulações do crânio.
 - Os controles de abertura da boca e articulações foram movidos para logo abaixo da imagem, com acesso mais fácil no celular.
 - Teste local confirmou as posições fechada e aberta, a separação entre Órgãos e Ossos e as vistas de frente e costas. Falta conferir com câmera real no celular.
+
+### 2.0.2 — versão ativa; validação no celular pendente
+
+- Abertura da mandíbula ampliada para permanecer visível quando o crânio está pequeno na tela.
+- O botão aplica imediatamente a posição aberta ou fechada, independentemente da velocidade do reconhecimento da câmera.
+- O script dos ossos recebe um número de versão no endereço para evitar o uso de uma cópia antiga armazenada pelo navegador.
+- Prévia em largura de celular confirmou a diferença entre boca fechada e aberta; falta repetir com câmera real.

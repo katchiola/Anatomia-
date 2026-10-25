@@ -138,7 +138,7 @@
         // As extremidades superiores permanecem nas articulações próximas às orelhas.
         // Ao abrir, o queixo desce enquanto os dentes inferiores se afastam dos superiores.
         const jawTop = head.y + headHeight * .29;
-        const jawHeight = headHeight * (.35 + .17 * jawOpen);
+        const jawHeight = headHeight * (.35 + .28 * jawOpen);
         const jaw = { x: head.x, y: jawTop + jawHeight / 2 };
         putImage('mandibula', jaw, faceWidth * .67, jawHeight);
         if (showJoints) {

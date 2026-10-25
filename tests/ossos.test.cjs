@@ -55,7 +55,7 @@ const closedHeight = imageDraws.at(-1).at(-1);
 const open = render(front, 'front', 'cranio', 1).find(item => item.organ.id === 'mandibula');
 const openHeight = imageDraws.at(-1).at(-1);
 assert.ok(open.y > closed.y, 'A mandíbula deve descer quando a boca abre.');
-assert.ok(openHeight > closedHeight * 1.4, 'A abertura deve ser visível.');
+assert.ok(openHeight > closedHeight * 1.75, 'A abertura deve ser visível mesmo no celular.');
 assert.ok(Math.abs((closed.y - closedHeight / 2) - (open.y - openHeight / 2)) < .001,
   'A parte superior da mandíbula deve permanecer junto à articulação.');
 
@@ -75,8 +75,9 @@ assert.ok(spots.some(item => item.organ.id === 'umero_direito'),
 
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 assert.match(html, /id="system-select"/);
-assert.match(html, /<script src="ossos\/rig\.js"><\/script>/);
+assert.match(html, /<script src="ossos\/rig\.js\?v=2\.0\.2"><\/script>/);
 assert.match(html, /systemMode === 'bones'/);
 assert.match(html, /id="bone-actions"/);
 assert.match(html, /jawTarget = jawTarget \? 0 : 1/);
+assert.match(html, /jawOpen = jawTarget;/);
 console.log('OK: 16 peças, duas vistas, nove setores, articulações, mandíbula e troca de sistema.');

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Anatomia Mágica 2.0.1</title>
+  <title>Anatomia Mágica 2.0.2</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #101827; color: #fff; font: 16px system-ui, sans-serif; }
@@ -34,7 +34,7 @@
 </head>
 <body>
   <header>
-    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 2.0.1 · órgãos e ossos</small></div>
+    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 2.0.2 · órgãos e ossos</small></div>
     <span id="status" role="status">Modo demonstração</span>
   </header>
   <div class="stage demo" id="stage">
@@ -96,7 +96,7 @@
     <p id="detail">Todos os 13 órgãos estão disponíveis. Toque em um deles ou escolha-o no menu para ver sua função.</p>
     <p id="help-text">As posições são esquemáticas e aproximadas. Ao aproximar a câmera, as imagens acompanham a escala da cabeça, dos ombros ou dos quadris que estiverem visíveis. Se nenhum desses pontos for reconhecido, afaste um pouco a câmera. O app mantém a última vista quando a pessoa está de lado; se a detecção não corresponder à posição, escolha frente ou costas manualmente. A câmera é processada no aparelho.</p>
   </div>
-  <script src="ossos/rig.js"></script>
+  <script src="ossos/rig.js?v=2.0.2"></script>
   <script>
     const $ = selector => document.querySelector(selector);
     const stage = $('#stage');
@@ -680,6 +680,7 @@
     });
     $('#jaw-control').addEventListener('click', () => {
       jawTarget = jawTarget ? 0 : 1;
+      jawOpen = jawTarget;
       $('#jaw-control').textContent = jawTarget ? '🗣️ Fechar boca' : '🗣️ Abrir boca';
       draw(performance.now());
     });

@@ -4,13 +4,15 @@ Aplicativo web educativo de anatomia em realidade aumentada. Usa a câmera do ce
 
 ## Versão atual
 
-**2.0.1 (teste local concluído; validação com a câmera do celular pendente)**
+**2.0.2 (teste local concluído; validação com a câmera do celular pendente)**
 
-O arquivo `index.html` da raiz é a versão ativa. A versão 2.0 permanece preservada em `versoes/v2.0/` e no ZIP respectivo. As versões anteriores continuam disponíveis nas cópias locais em `versoes/` e `pacotes/` e no histórico do GitHub.
+O arquivo `index.html` da raiz é a versão ativa. A versão 2.0.1 permanece preservada em `versoes/v2.0.1/` e no ZIP respectivo. As versões anteriores continuam disponíveis nas cópias locais em `versoes/` e `pacotes/` e no histórico do GitHub.
 
 A versão 2.0 acrescenta o seletor **Sistema: Órgãos | Ossos**. Só um sistema é desenhado por vez. No modo Ossos, há um esqueleto de 16 peças distribuídas em nove setores, com imagens próprias de frente e costas. Crânio e mandíbula são separados; o botão **Abrir/fechar boca** move a mandíbula na vista frontal. O botão **Articulações** mostra pontos de ligação. Na câmera, cada úmero segue ombro e cotovelo, cada antebraço segue cotovelo e punho, cada fêmur segue quadril e joelho, e cada perna segue joelho e tornozelo. Mãos e pés usam os pontos aproximados disponíveis. Se algum ponto faltar, apenas as peças dependentes dele deixam de aparecer.
 
 Na versão 2.0.1, a mandíbula fechada foi baixada até os dentes superiores e sua abertura foi ampliada. As extremidades superiores permanecem junto às articulações do crânio enquanto o queixo desce. Os botões de boca e articulações ficam logo abaixo da imagem para acesso mais fácil no celular.
+
+Na versão 2.0.2, o botão aplica a abertura completa imediatamente e o espaço entre os dentes fica maior para aparecer mesmo quando o rosto está pequeno na tela. O arquivo de posicionamento dos ossos usa um endereço com número da versão para evitar que o celular carregue a lógica antiga do cache.
 
 O modo Órgãos conserva os 13 órgãos, seus filtros, tamanhos, imagens e comportamento da versão 1.5.6. A troca de sistema ocorre sem reiniciar a câmera. A demonstração permite testar o esqueleto sem câmera. As peças dos ossos ficam em `ossos/vistas/`; consulte `ossos/README.md` e a prévia `ossos/previsualizar.html`.
 
@@ -44,4 +46,4 @@ Para conferir os 13 órgãos e suas vistas, execute `node tests/vistas.test.cjs`
 
 A câmera é processada no próprio aparelho pelo código do navegador. O aplicativo não possui contas, login ou servidor de armazenamento de imagens.
 
-As posições anatômicas são educativas e aproximadas. O rastreamento do corpo não mede a abertura da boca, então a mandíbula tem controle manual. Ainda é preciso conferir alinhamento, escala e desempenho da versão 2.0.1 com câmera real em um celular. O aplicativo não é uma ferramenta médica.
+As posições anatômicas são educativas e aproximadas. O rastreamento do corpo não mede a abertura da boca, então a mandíbula tem controle manual. Ainda é preciso conferir alinhamento, escala e desempenho da versão 2.0.2 com câmera real em um celular. O aplicativo não é uma ferramenta médica.
