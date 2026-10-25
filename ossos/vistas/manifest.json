@@ -1,0 +1,25 @@
+{
+  "estado": "rascunho visual da versao 2.0",
+  "vistas": {
+    "front": "01-frente.png",
+    "back": "05-costas.png"
+  },
+  "pecas": [
+    { "id": "cranio", "nome": "Crânio", "setor": "Crânio", "lado": "central" },
+    { "id": "mandibula", "nome": "Mandíbula", "setor": "Crânio", "lado": "central" },
+    { "id": "torax", "nome": "Tórax", "setor": "Tórax", "lado": "central" },
+    { "id": "quadril", "nome": "Quadril", "setor": "Quadril", "lado": "central" },
+    { "id": "umero_direito", "nome": "Úmero direito", "setor": "Úmeros", "lado": "direito" },
+    { "id": "umero_esquerdo", "nome": "Úmero esquerdo", "setor": "Úmeros", "lado": "esquerdo" },
+    { "id": "antebraco_direito", "nome": "Rádio e ulna direitos", "setor": "Antebraços", "lado": "direito" },
+    { "id": "antebraco_esquerdo", "nome": "Rádio e ulna esquerdos", "setor": "Antebraços", "lado": "esquerdo" },
+    { "id": "mao_direita", "nome": "Mão direita", "setor": "Mãos", "lado": "direito" },
+    { "id": "mao_esquerda", "nome": "Mão esquerda", "setor": "Mãos", "lado": "esquerdo" },
+    { "id": "femur_direito", "nome": "Fêmur direito", "setor": "Fêmures", "lado": "direito" },
+    { "id": "femur_esquerdo", "nome": "Fêmur esquerdo", "setor": "Fêmures", "lado": "esquerdo" },
+    { "id": "perna_direita", "nome": "Tíbia e fíbula direitas", "setor": "Pernas", "lado": "direito" },
+    { "id": "perna_esquerda", "nome": "Tíbia e fíbula esquerdas", "setor": "Pernas", "lado": "esquerdo" },
+    { "id": "pe_direito", "nome": "Pé direito", "setor": "Pés", "lado": "direito" },
+    { "id": "pe_esquerdo", "nome": "Pé esquerdo", "setor": "Pés", "lado": "esquerdo" }
+  ]
+}

@@ -87,8 +87,17 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - Os centros dos órgãos foram mantidos para preservar o posicionamento alcançado na versão anterior.
 - Testes automatizados confirmam as seis proporções ajustadas, os 13 órgãos, as vistas de frente e costas e a ampliação em closes. A aparência com câmera real ainda precisa de conferência no celular.
 
-### 1.5.6 — atual, publicada; revisão visual no celular pendente
+### 1.5.6 — publicada; preservada
 
 - A foto de teste da 1.5.5 mostrou que a ampliação anterior ainda era discreta. Coração, fígado, estômago, intestino grosso e intestino delgado foram ampliados em aproximadamente 30% a 35% adicionais.
 - O fígado foi deslocado levemente para o centro para permanecer dentro da largura do tronco. O pâncreas manteve o tamanho da 1.5.5, aprovado no teste visual.
 - Testes automatizados passaram para tamanhos, 13 órgãos, vistas de frente/costas e ampliação em closes. A proporção final ainda precisa de nova conferência com câmera real.
+
+### 2.0 — versão ativa; validação no celular pendente
+
+- Adicionado seletor Sistema para alternar entre Órgãos e Ossos. Os dois sistemas não aparecem simultaneamente e a troca não reinicia a câmera.
+- Mantidos os 13 órgãos, filtros, imagens de frente/costas e proporções da 1.5.6.
+- Integradas 16 peças ósseas em nove setores, com 32 ilustrações de frente e costas. Cada membro é posicionado entre pontos corporais próprios; a perda de um ponto oculta somente as peças dependentes dele.
+- Incluídos marcadores opcionais das articulações e mandíbula separada com controle manual de abertura na vista frontal. A demonstração mostra o esqueleto completo sem câmera.
+- A mensagem de ajuda fica abaixo da área da imagem no modo Ossos para não encobrir os pés.
+- Testes locais passaram para os órgãos, ossos, setores, vistas, movimento dos membros e mandíbula. A montagem e o desempenho com a câmera real ainda precisam de teste no celular.

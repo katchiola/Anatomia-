@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Anatomia Mágica 1.5.6</title>
+  <title>Anatomia Mágica 2.0</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #101827; color: #fff; font: 16px system-ui, sans-serif; }
@@ -16,6 +16,8 @@
     .stage.demo video { opacity: 0; }
     .mirror { transform: scaleX(-1); }
     .hint { position: absolute; bottom: 12px; left: 12px; right: 12px; background: #111a2ad9; padding: 10px; border-radius: 10px; text-align: center; font-size: 13px; pointer-events: none; }
+    .stage.bones .hint { display: none; }
+    .outside-hint { max-width: 780px; margin: 6px auto 0; padding: 8px 14px; color: #dbeafe; text-align: center; font-size: 13px; }
     .controls { max-width: 780px; margin: auto; padding: 14px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
     button, select { border: 0; background: #22c55e; color: #09200f; padding: 11px 12px; border-radius: 12px; font: inherit; font-weight: 700; }
     button { cursor: pointer; }
@@ -31,27 +33,52 @@
 </head>
 <body>
   <header>
-    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 1.5.6 · imagens em revisão</small></div>
+    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 2.0 · órgãos e ossos</small></div>
     <span id="status" role="status">Modo demonstração</span>
   </header>
   <div class="stage demo" id="stage">
     <video id="video" autoplay muted playsinline></video>
-    <canvas id="overlay" aria-label="Órgãos sobre o corpo"></canvas>
+    <canvas id="overlay" aria-label="Anatomia sobre o corpo"></canvas>
     <div class="hint" id="hint">Escolha frente ou costas. Toque em “Iniciar câmera” para experimentar no corpo.</div>
   </div>
+  <div id="bone-hint" class="outside-hint" hidden></div>
   <div class="controls">
     <button id="start" type="button">📷 Iniciar câmera</button>
     <button id="demo" class="secondary" type="button">🧪 Demonstração</button>
     <button id="switch" class="secondary" type="button">↻ Trocar câmera</button>
     <button id="mirror" class="secondary" type="button">🪞 Espelhar: não</button>
     <button id="labels" class="secondary" type="button">🏷️ Nomes: não</button>
-    <label for="organ-filter">Órgãos</label>
-    <select id="organ-filter" aria-label="Órgãos exibidos">
-      <option value="todos" selected>Todos os 13 órgãos</option>
-      <option value="principais">Órgãos principais</option>
-      <option value="pulmoes">Pulmões juntos</option>
-      <option value="rins">Rins juntos</option>
+    <label for="system-select">Sistema</label>
+    <select id="system-select" aria-label="Sistema anatômico">
+      <option value="organs" selected>Órgãos</option>
+      <option value="bones">Ossos</option>
     </select>
+    <span id="organ-controls" class="view-controls">
+      <label for="organ-filter">Órgãos</label>
+      <select id="organ-filter" aria-label="Órgãos exibidos">
+        <option value="todos" selected>Todos os 13 órgãos</option>
+        <option value="principais">Órgãos principais</option>
+        <option value="pulmoes">Pulmões juntos</option>
+        <option value="rins">Rins juntos</option>
+      </select>
+    </span>
+    <span id="bone-controls" class="view-controls" hidden>
+      <label for="bone-filter">Ossos</label>
+      <select id="bone-filter" aria-label="Setor do esqueleto">
+        <option value="todos" selected>Esqueleto completo</option>
+        <option value="cranio">Crânio e mandíbula</option>
+        <option value="torax">Tórax</option>
+        <option value="quadril">Quadril</option>
+        <option value="umeros">Úmeros</option>
+        <option value="antebracos">Antebraços</option>
+        <option value="maos">Mãos</option>
+        <option value="femures">Fêmures</option>
+        <option value="pernas">Pernas</option>
+        <option value="pes">Pés</option>
+      </select>
+    </span>
+    <button id="joint-toggle" class="secondary" type="button" hidden>🦴 Articulações: não</button>
+    <button id="jaw-control" class="secondary" type="button" hidden>🗣️ Abrir boca</button>
     <button id="rotation-mode" class="secondary" type="button" disabled>🧭 Vista: manual</button>
     <div class="view-controls" id="view-controls">
       <label for="view-select">Mostrar</label>
@@ -64,8 +91,9 @@
   </div>
   <div class="info">
     <p id="detail">Todos os 13 órgãos estão disponíveis. Toque em um deles ou escolha-o no menu para ver sua função.</p>
-    <p>As posições são esquemáticas e aproximadas. Ao aproximar a câmera, as imagens acompanham a escala da cabeça, dos ombros ou dos quadris que estiverem visíveis. Se nenhum desses pontos for reconhecido, afaste um pouco a câmera. O app mantém a última vista quando a pessoa está de lado; se a detecção não corresponder à posição, escolha frente ou costas manualmente. A câmera é processada no aparelho.</p>
+    <p id="help-text">As posições são esquemáticas e aproximadas. Ao aproximar a câmera, as imagens acompanham a escala da cabeça, dos ombros ou dos quadris que estiverem visíveis. Se nenhum desses pontos for reconhecido, afaste um pouco a câmera. O app mantém a última vista quando a pessoa está de lado; se a detecção não corresponder à posição, escolha frente ou costas manualmente. A câmera é processada no aparelho.</p>
   </div>
+  <script src="ossos/rig.js"></script>
   <script>
     const $ = selector => document.querySelector(selector);
     const stage = $('#stage');
@@ -92,6 +120,10 @@
     ];
     const mainIds = new Set(['cerebro', 'pulmao_direito', 'pulmao_esquerdo', 'coracao', 'figado', 'estomago', 'grosso', 'delgado']);
     const cache = new Map();
+    const boneCache = new Map();
+    let systemMode = 'organs';
+    let showJoints = false;
+    let jawOpen = 0;
     let stream = null;
     let pose = null;
     let landmarks = null;
@@ -112,7 +144,11 @@
 
     function status(message, hint) {
       $('#status').textContent = message;
-      if (hint) $('#hint').textContent = hint;
+      if (hint) setHint(hint);
+    }
+    function setHint(message) {
+      $('#hint').textContent = message;
+      $('#bone-hint').textContent = message;
     }
     function selectedOrgans() {
       const selected = $('#organ-filter').value;
@@ -250,6 +286,31 @@
       while (cache.size > 36) cache.delete(cache.keys().next().value);
       return entry;
     }
+    function boneSprite(id, view) {
+      const key = `${id}/${view}`;
+      if (boneCache.has(key)) return boneCache.get(key);
+      const entry = { image: new Image(), ready: false, error: false, crop: null };
+      entry.image.onload = () => { entry.crop = imageCrop(entry.image); entry.ready = true; draw(performance.now()); };
+      entry.image.onerror = () => { entry.error = true; console.error('Osso ausente:', entry.image.src); draw(performance.now()); };
+      entry.image.src = `ossos/vistas/${id}/${viewFiles[view]}?v=2`;
+      boneCache.set(key, entry);
+      return entry;
+    }
+    function selectedBones() {
+      const sector = $('#bone-filter').value;
+      return window.SkeletonRig.parts.filter(part => sector === 'todos' || part.sector === sector);
+    }
+    function updateBoneControls() {
+      const bones = systemMode === 'bones';
+      stage.classList.toggle('bones', bones);
+      $('#bone-hint').hidden = !bones;
+      $('#bone-hint').textContent = $('#hint').textContent;
+      $('#organ-controls').hidden = bones;
+      $('#bone-controls').hidden = !bones;
+      $('#joint-toggle').hidden = !bones;
+      $('#jaw-control').hidden = !bones || currentView !== 'front' ||
+        !['todos', 'cranio'].includes($('#bone-filter').value);
+    }
     function pairVertical(pair) {
       let x = -(pair.b.y - pair.a.y) / pair.width;
       let y = (pair.b.x - pair.a.x) / pair.width;
@@ -316,20 +377,81 @@
       ctx.beginPath(); ctx.ellipse(0, -.88, .31, .24, 0, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
+    function drawDemoSkeletonBody(points) {
+      const p = index => screenPoint(points[index]);
+      ctx.save();
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = Math.max(16, stage.clientWidth * .065);
+      ctx.lineCap = 'round';
+      for (const chain of [[11, 23, 25, 27], [12, 24, 26, 28],
+        [11, 13, 15, 19], [12, 14, 16, 20], [11, 12], [23, 24]]) {
+        ctx.beginPath();
+        chain.forEach((index, i) => {
+          const point = p(index);
+          if (i) ctx.lineTo(point.x, point.y);
+          else ctx.moveTo(point.x, point.y);
+        });
+        ctx.stroke();
+      }
+      const head = headGeometry(points);
+      if (head) {
+        ctx.fillStyle = '#475569';
+        ctx.beginPath(); ctx.ellipse(head.center.x, head.center.y,
+          head.width * .49, head.height * .52, 0, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+    function drawLabels(count, body, head) {
+      if (!labels || !(count <= 4 || (body?.length ?? head?.width ?? 0) >= 110)) return;
+      ctx.font = 'bold 11px system-ui';
+      ctx.textAlign = 'center';
+      const placed = [];
+      for (const spot of [...hitSpots].reverse()) {
+        const halfWidth = spot.organ.name.length * 3.2 + 4;
+        const box = { left: spot.x - halfWidth, right: spot.x + halfWidth,
+          top: spot.y - 7, bottom: spot.y + 7 };
+        if (placed.some(other => box.left < other.right + 3 && box.right > other.left - 3 &&
+            box.top < other.bottom + 3 && box.bottom > other.top - 3)) continue;
+        placed.push(box);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#111827';
+        ctx.strokeText(spot.organ.name, spot.x, spot.y);
+        ctx.fillStyle = 'white';
+        ctx.fillText(spot.organ.name, spot.x, spot.y);
+      }
+    }
     function draw(t) {
       const w = stage.clientWidth, h = stage.clientHeight;
       ctx.clearRect(0, 0, w, h);
       hitSpots = [];
-      const points = demo ? demoLandmarks() : landmarks;
+      const points = demo
+        ? systemMode === 'bones' ? window.SkeletonRig.demoLandmarks(manualView, t) : demoLandmarks()
+        : landmarks;
       if (!points) {
-        if (!demo && trackingReady) $('#hint').textContent = 'Corpo não reconhecido: afaste um pouco a câmera até aparecerem cabeça, ombros ou quadris.';
+        if (!demo && trackingReady) setHint('Corpo não reconhecido: afaste um pouco a câmera até aparecerem cabeça, ombros ou quadris.');
         return;
       }
       if (!updateRotation(points)) return;
+      updateBoneControls();
       const body = bodyGeometry(points);
       const head = headGeometry(points);
       if (!body && !head) {
-        if (!demo && trackingReady) $('#hint').textContent = 'Mostre pelo menos a cabeça, os ombros ou os quadris para posicionar os órgãos.';
+        if (!demo && trackingReady) setHint(systemMode === 'bones'
+          ? 'Mostre a cabeça, os ombros ou os quadris; braços e pernas aparecem quando seus pontos forem reconhecidos.'
+          : 'Mostre pelo menos a cabeça, os ombros ou os quadris para posicionar os órgãos.');
+        return;
+      }
+      if (systemMode === 'bones') {
+        if (!demo && trackingReady) {
+          const hint = body?.length < 100
+            ? 'Mostre o corpo inteiro para ver os ossos das pernas e dos braços.'
+            : 'Os ossos acompanham as articulações reconhecidas. Toque em uma peça ou escolha um setor.';
+          if ($('#hint').textContent !== hint) setHint(hint);
+        }
+        if (demo) drawDemoSkeletonBody(points);
+        hitSpots = window.SkeletonRig.render({ ctx, points, view: currentView, screenPoint,
+          image: boneSprite, selected: $('#bone-filter').value, showJoints, jawOpen });
+        drawLabels(selectedBones().length, body, head);
         return;
       }
       if (!demo && trackingReady) {
@@ -342,7 +464,7 @@
               : body.length < 110
                 ? 'Aproxime a pessoa da câmera para ver melhor os órgãos. Os nomes ficam ocultos à distância.'
                 : 'Toque em um órgão. Se a vista estiver errada, escolha frente ou costas manualmente.';
-        if ($('#hint').textContent !== hint) $('#hint').textContent = hint;
+        if ($('#hint').textContent !== hint) setHint(hint);
       }
       if (demo && body) drawDemoBody(body);
       // Na vista "todos", órgãos mais profundos são desenhados por último para não desaparecerem.
@@ -392,24 +514,7 @@
           }
         }
       }
-      if (labels && (visible.length <= 4 || (body?.length ?? head?.width ?? 0) >= 110)) {
-        ctx.font = 'bold 11px system-ui';
-        ctx.textAlign = 'center';
-        const placed = [];
-        for (const spot of [...hitSpots].reverse()) {
-          const halfWidth = spot.organ.name.length * 3.2 + 4;
-          const box = { left: spot.x - halfWidth, right: spot.x + halfWidth,
-            top: spot.y - 7, bottom: spot.y + 7 };
-          if (placed.some(other => box.left < other.right + 3 && box.right > other.left - 3 &&
-              box.top < other.bottom + 3 && box.bottom > other.top - 3)) continue;
-          placed.push(box);
-          ctx.lineWidth = 3;
-          ctx.strokeStyle = '#111827';
-          ctx.strokeText(spot.organ.name, spot.x, spot.y);
-          ctx.fillStyle = 'white';
-          ctx.fillText(spot.organ.name, spot.x, spot.y);
-        }
-      }
+      drawLabels(visible.length, body, head);
     }
     function loadScript(url) {
       return new Promise((resolve, reject) => {
@@ -468,7 +573,9 @@
         try {
           await loadPose();
           trackingReady = true;
-          status('Reconhecimento ativo', 'Fique de frente ou de costas com ombros e quadris visíveis. Se a vista falhar, escolha-a manualmente.');
+          status('Reconhecimento ativo', systemMode === 'bones'
+            ? 'Mostre cabeça, tronco, braços e pernas para ligar os ossos às articulações.'
+            : 'Fique de frente ou de costas com ombros e quadris visíveis. Se a vista falhar, escolha-a manualmente.');
         } catch (error) {
           trackingReady = false;
           status('Câmera ativa — sem rastreamento', `Falha ao carregar MediaPipe: ${error.message}`);
@@ -491,7 +598,9 @@
       $('#rotation-mode').disabled = true;
       $('#view-controls').hidden = false;
       $('#start').textContent = '📷 Iniciar câmera';
-      status('Modo demonstração', 'Escolha frente ou costas para virar o corpo e todos os órgãos juntos.');
+      status('Modo demonstração', systemMode === 'bones'
+        ? 'Escolha frente ou costas para ver o esqueleto articulado.'
+        : 'Escolha frente ou costas para virar o corpo e todos os órgãos juntos.');
       draw(performance.now());
     }
     async function loop(t) {
@@ -530,6 +639,41 @@
       $('#detail').textContent = shown.length === 1
         ? `${shown[0].name}: ${shown[0].info}`
         : `${shown.length} órgãos selecionados. Toque em um deles para descobrir sua função.`;
+      draw(performance.now());
+    });
+    $('#system-select').addEventListener('change', event => {
+      systemMode = event.target.value === 'bones' ? 'bones' : 'organs';
+      updateBoneControls();
+      $('#detail').textContent = systemMode === 'bones'
+        ? 'Esqueleto completo: 16 peças em nove setores. Toque em um osso para conhecer sua função.'
+        : 'Todos os 13 órgãos estão disponíveis. Toque em um deles ou escolha-o no menu para ver sua função.';
+      $('#help-text').textContent = systemMode === 'bones'
+        ? 'Os ossos seguem cabeça, ombros, cotovelos, punhos, quadris, joelhos e tornozelos reconhecidos pela câmera. As peças aparecem apenas quando seus pontos estão visíveis. A mandíbula pode ser aberta pelo botão. A vista de costas usa imagens próprias. A câmera é processada no aparelho.'
+        : 'As posições são esquemáticas e aproximadas. Ao aproximar a câmera, as imagens acompanham a escala da cabeça, dos ombros ou dos quadris que estiverem visíveis. Se nenhum desses pontos for reconhecido, afaste um pouco a câmera. O app mantém a última vista quando a pessoa está de lado; se a detecção não corresponder à posição, escolha frente ou costas manualmente. A câmera é processada no aparelho.';
+      if (demo) status('Modo demonstração', systemMode === 'bones'
+        ? 'Escolha frente ou costas para ver o esqueleto articulado.'
+        : 'Escolha frente ou costas para virar o corpo e todos os órgãos juntos.');
+      else if (trackingReady) status('Reconhecimento ativo', systemMode === 'bones'
+        ? 'Mostre cabeça, tronco, braços e pernas para ligar os ossos às articulações.'
+        : 'Fique de frente ou de costas com ombros e quadris visíveis.');
+      draw(performance.now());
+    });
+    $('#bone-filter').addEventListener('change', () => {
+      const shown = selectedBones();
+      $('#detail').textContent = shown.length === 1
+        ? `${shown[0].name}: ${shown[0].info}`
+        : `${shown.length} peças ósseas selecionadas. Toque em uma delas para conhecer sua função.`;
+      updateBoneControls();
+      draw(performance.now());
+    });
+    $('#joint-toggle').addEventListener('click', () => {
+      showJoints = !showJoints;
+      $('#joint-toggle').textContent = `🦴 Articulações: ${showJoints ? 'sim' : 'não'}`;
+      draw(performance.now());
+    });
+    $('#jaw-control').addEventListener('click', () => {
+      jawOpen = jawOpen ? 0 : 1;
+      $('#jaw-control').textContent = jawOpen ? '🗣️ Fechar boca' : '🗣️ Abrir boca';
       draw(performance.now());
     });
     $('#rotation-mode').addEventListener('click', () => {
