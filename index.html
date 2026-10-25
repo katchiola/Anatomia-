@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Anatomia Mágica 2.0.2</title>
+  <title>Anatomia Mágica 3.0</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #101827; color: #fff; font: 16px system-ui, sans-serif; }
@@ -16,7 +16,7 @@
     .stage.demo video { opacity: 0; }
     .mirror { transform: scaleX(-1); }
     .hint { position: absolute; bottom: 12px; left: 12px; right: 12px; background: #111a2ad9; padding: 10px; border-radius: 10px; text-align: center; font-size: 13px; pointer-events: none; }
-    .stage.bones .hint { display: none; }
+    .stage.bones .hint, .stage.muscles .hint { display: none; }
     .outside-hint { max-width: 780px; margin: 6px auto 0; padding: 8px 14px; color: #dbeafe; text-align: center; font-size: 13px; }
     .bone-actions { max-width: 780px; margin: 6px auto; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
     .controls { max-width: 780px; margin: auto; padding: 14px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
@@ -34,7 +34,7 @@
 </head>
 <body>
   <header>
-    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 2.0.2 · órgãos e ossos</small></div>
+    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 3.0 · órgãos, ossos e músculos</small></div>
     <span id="status" role="status">Modo demonstração</span>
   </header>
   <div class="stage demo" id="stage">
@@ -42,7 +42,7 @@
     <canvas id="overlay" aria-label="Anatomia sobre o corpo"></canvas>
     <div class="hint" id="hint">Escolha frente ou costas. Toque em “Iniciar câmera” para experimentar no corpo.</div>
   </div>
-  <div id="bone-hint" class="outside-hint" hidden></div>
+  <div id="anatomy-hint" class="outside-hint" hidden></div>
   <div id="bone-actions" class="bone-actions" hidden>
     <button id="jaw-control" class="secondary" type="button" hidden>🗣️ Abrir boca</button>
     <button id="joint-toggle" class="secondary" type="button" hidden>🦴 Articulações: não</button>
@@ -57,6 +57,7 @@
     <select id="system-select" aria-label="Sistema anatômico">
       <option value="organs" selected>Órgãos</option>
       <option value="bones">Ossos</option>
+      <option value="muscles">Músculos</option>
     </select>
     <span id="organ-controls" class="view-controls">
       <label for="organ-filter">Órgãos</label>
@@ -82,6 +83,10 @@
         <option value="pes">Pés</option>
       </select>
     </span>
+    <span id="muscle-controls" class="view-controls" hidden>
+      <label for="muscle-filter">Músculos</label>
+      <select id="muscle-filter" aria-label="Região muscular"></select>
+    </span>
     <button id="rotation-mode" class="secondary" type="button" disabled>🧭 Vista: manual</button>
     <div class="view-controls" id="view-controls">
       <label for="view-select">Mostrar</label>
@@ -97,6 +102,7 @@
     <p id="help-text">As posições são esquemáticas e aproximadas. Ao aproximar a câmera, as imagens acompanham a escala da cabeça, dos ombros ou dos quadris que estiverem visíveis. Se nenhum desses pontos for reconhecido, afaste um pouco a câmera. O app mantém a última vista quando a pessoa está de lado; se a detecção não corresponder à posição, escolha frente ou costas manualmente. A câmera é processada no aparelho.</p>
   </div>
   <script src="ossos/rig.js?v=2.0.2"></script>
+  <script src="musculos/rig.js?v=3.0"></script>
   <script>
     const $ = selector => document.querySelector(selector);
     const stage = $('#stage');
@@ -152,7 +158,7 @@
     }
     function setHint(message) {
       $('#hint').textContent = message;
-      $('#bone-hint').textContent = message;
+      $('#anatomy-hint').textContent = message;
     }
     function selectedOrgans() {
       const selected = $('#organ-filter').value;
@@ -304,14 +310,26 @@
       const sector = $('#bone-filter').value;
       return window.SkeletonRig.parts.filter(part => sector === 'todos' || part.sector === sector);
     }
-    function updateBoneControls() {
+    for (const [value, label] of window.MuscleRig.sectors) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = label;
+      $('#muscle-filter').append(option);
+    }
+    function selectedMuscles() {
+      return window.MuscleRig.visibleParts(currentView, $('#muscle-filter').value);
+    }
+    function updateSystemControls() {
       const bones = systemMode === 'bones';
+      const muscles = systemMode === 'muscles';
       stage.classList.toggle('bones', bones);
-      $('#bone-hint').hidden = !bones;
+      stage.classList.toggle('muscles', muscles);
+      $('#anatomy-hint').hidden = !(bones || muscles);
       $('#bone-actions').hidden = !bones;
-      $('#bone-hint').textContent = $('#hint').textContent;
-      $('#organ-controls').hidden = bones;
+      $('#anatomy-hint').textContent = $('#hint').textContent;
+      $('#organ-controls').hidden = bones || muscles;
       $('#bone-controls').hidden = !bones;
+      $('#muscle-controls').hidden = !muscles;
       $('#joint-toggle').hidden = !bones;
       $('#jaw-control').hidden = !bones || currentView !== 'front' ||
         !['todos', 'cranio'].includes($('#bone-filter').value);
@@ -406,6 +424,40 @@
       }
       ctx.restore();
     }
+    function drawDemoMuscleBody(points) {
+      const p = index => screenPoint(points[index]);
+      const shoulders = [p(11), p(12)], hips = [p(23), p(24)];
+      ctx.save();
+      ctx.strokeStyle = '#633c49';
+      ctx.lineWidth = Math.max(18, stage.clientWidth * .073);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      for (const chain of [[11, 13, 15, 19], [12, 14, 16, 20],
+        [23, 25, 27, 31], [24, 26, 28, 32]]) {
+        ctx.beginPath();
+        chain.forEach((index, i) => {
+          const point = p(index);
+          if (i) ctx.lineTo(point.x, point.y);
+          else ctx.moveTo(point.x, point.y);
+        });
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#633c49';
+      ctx.beginPath();
+      ctx.moveTo(shoulders[0].x, shoulders[0].y);
+      ctx.lineTo(shoulders[1].x, shoulders[1].y);
+      ctx.lineTo(hips[1].x * 1.18 - hips[0].x * .18, hips[1].y + 8);
+      ctx.lineTo(hips[0].x * 1.18 - hips[1].x * .18, hips[0].y + 8);
+      ctx.closePath(); ctx.fill();
+      const head = headGeometry(points);
+      if (head) {
+        ctx.beginPath();
+        ctx.ellipse(head.center.x, head.center.y, head.width * .48,
+          head.height * .55, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
     function drawLabels(count, body, head) {
       if (!labels || !(count <= 4 || (body?.length ?? head?.width ?? 0) >= 110)) return;
       ctx.font = 'bold 11px system-ui';
@@ -430,20 +482,20 @@
       ctx.clearRect(0, 0, w, h);
       hitSpots = [];
       const points = demo
-        ? systemMode === 'bones' ? window.SkeletonRig.demoLandmarks(manualView, t) : demoLandmarks()
+        ? systemMode === 'organs' ? demoLandmarks() : window.SkeletonRig.demoLandmarks(manualView, t)
         : landmarks;
       if (!points) {
         if (!demo && trackingReady) setHint('Corpo não reconhecido: afaste um pouco a câmera até aparecerem cabeça, ombros ou quadris.');
         return;
       }
       if (!updateRotation(points)) return;
-      updateBoneControls();
+      updateSystemControls();
       const body = bodyGeometry(points);
       const head = headGeometry(points);
       if (!body && !head) {
-        if (!demo && trackingReady) setHint(systemMode === 'bones'
-          ? 'Mostre a cabeça, os ombros ou os quadris; braços e pernas aparecem quando seus pontos forem reconhecidos.'
-          : 'Mostre pelo menos a cabeça, os ombros ou os quadris para posicionar os órgãos.');
+        if (!demo && trackingReady) setHint(systemMode === 'organs'
+          ? 'Mostre pelo menos a cabeça, os ombros ou os quadris para posicionar os órgãos.'
+          : 'Mostre a cabeça, os ombros ou os quadris; os membros aparecem quando seus pontos forem reconhecidos.');
         return;
       }
       if (systemMode === 'bones') {
@@ -459,6 +511,19 @@
         hitSpots = window.SkeletonRig.render({ ctx, points, view: currentView, screenPoint,
           image: boneSprite, selected: $('#bone-filter').value, showJoints, jawOpen });
         drawLabels(selectedBones().length, body, head);
+        return;
+      }
+      if (systemMode === 'muscles') {
+        if (!demo && trackingReady) {
+          const hint = body?.length < 100
+            ? 'Mostre o corpo inteiro para ver os músculos dos braços e das pernas.'
+            : 'Os músculos acompanham as articulações reconhecidas. Toque em um grupo ou escolha uma região.';
+          if ($('#hint').textContent !== hint) setHint(hint);
+        }
+        if (demo) drawDemoMuscleBody(points);
+        hitSpots = window.MuscleRig.render({ ctx, points, view: currentView, screenPoint,
+          selected: $('#muscle-filter').value });
+        drawLabels(selectedMuscles().length, body, head);
         return;
       }
       if (!demo && trackingReady) {
@@ -582,7 +647,9 @@
           trackingReady = true;
           status('Reconhecimento ativo', systemMode === 'bones'
             ? 'Mostre cabeça, tronco, braços e pernas para ligar os ossos às articulações.'
-            : 'Fique de frente ou de costas com ombros e quadris visíveis. Se a vista falhar, escolha-a manualmente.');
+            : systemMode === 'muscles'
+              ? 'Mostre cabeça, tronco, braços e pernas para acompanhar os grupos musculares.'
+              : 'Fique de frente ou de costas com ombros e quadris visíveis. Se a vista falhar, escolha-a manualmente.');
         } catch (error) {
           trackingReady = false;
           status('Câmera ativa — sem rastreamento', `Falha ao carregar MediaPipe: ${error.message}`);
@@ -607,7 +674,9 @@
       $('#start').textContent = '📷 Iniciar câmera';
       status('Modo demonstração', systemMode === 'bones'
         ? 'Escolha frente ou costas para ver o esqueleto articulado.'
-        : 'Escolha frente ou costas para virar o corpo e todos os órgãos juntos.');
+        : systemMode === 'muscles'
+          ? 'Escolha frente ou costas para ver os grupos musculares.'
+          : 'Escolha frente ou costas para virar o corpo e todos os órgãos juntos.');
       draw(performance.now());
     }
     async function loop(t) {
@@ -649,20 +718,28 @@
       draw(performance.now());
     });
     $('#system-select').addEventListener('change', event => {
-      systemMode = event.target.value === 'bones' ? 'bones' : 'organs';
-      updateBoneControls();
+      systemMode = ['organs', 'bones', 'muscles'].includes(event.target.value) ? event.target.value : 'organs';
+      updateSystemControls();
       $('#detail').textContent = systemMode === 'bones'
         ? 'Esqueleto completo: 16 peças em nove setores. Toque em um osso para conhecer sua função.'
-        : 'Todos os 13 órgãos estão disponíveis. Toque em um deles ou escolha-o no menu para ver sua função.';
+        : systemMode === 'muscles'
+          ? 'Grupos musculares de frente e costas. Toque em um músculo ou escolha uma região.'
+          : 'Todos os 13 órgãos estão disponíveis. Toque em um deles ou escolha-o no menu para ver sua função.';
       $('#help-text').textContent = systemMode === 'bones'
         ? 'Os ossos seguem cabeça, ombros, cotovelos, punhos, quadris, joelhos e tornozelos reconhecidos pela câmera. As peças aparecem apenas quando seus pontos estão visíveis. A mandíbula pode ser aberta pelo botão. A vista de costas usa imagens próprias. A câmera é processada no aparelho.'
-        : 'As posições são esquemáticas e aproximadas. Ao aproximar a câmera, as imagens acompanham a escala da cabeça, dos ombros ou dos quadris que estiverem visíveis. Se nenhum desses pontos for reconhecido, afaste um pouco a câmera. O app mantém a última vista quando a pessoa está de lado; se a detecção não corresponder à posição, escolha frente ou costas manualmente. A câmera é processada no aparelho.';
+        : systemMode === 'muscles'
+          ? 'Os grupos musculares são ilustrações educativas esquemáticas. Eles seguem os pontos de cabeça, ombros, cotovelos, punhos, quadris, joelhos e tornozelos reconhecidos; a câmera é processada no aparelho.'
+          : 'As posições são esquemáticas e aproximadas. Ao aproximar a câmera, as imagens acompanham a escala da cabeça, dos ombros ou dos quadris que estiverem visíveis. Se nenhum desses pontos for reconhecido, afaste um pouco a câmera. O app mantém a última vista quando a pessoa está de lado; se a detecção não corresponder à posição, escolha frente ou costas manualmente. A câmera é processada no aparelho.';
       if (demo) status('Modo demonstração', systemMode === 'bones'
         ? 'Escolha frente ou costas para ver o esqueleto articulado.'
-        : 'Escolha frente ou costas para virar o corpo e todos os órgãos juntos.');
+        : systemMode === 'muscles'
+          ? 'Escolha frente ou costas para ver os grupos musculares.'
+          : 'Escolha frente ou costas para virar o corpo e todos os órgãos juntos.');
       else if (trackingReady) status('Reconhecimento ativo', systemMode === 'bones'
         ? 'Mostre cabeça, tronco, braços e pernas para ligar os ossos às articulações.'
-        : 'Fique de frente ou de costas com ombros e quadris visíveis.');
+        : systemMode === 'muscles'
+          ? 'Mostre cabeça, tronco, braços e pernas para acompanhar os grupos musculares.'
+          : 'Fique de frente ou de costas com ombros e quadris visíveis.');
       draw(performance.now());
     });
     $('#bone-filter').addEventListener('change', () => {
@@ -670,7 +747,14 @@
       $('#detail').textContent = shown.length === 1
         ? `${shown[0].name}: ${shown[0].info}`
         : `${shown.length} peças ósseas selecionadas. Toque em uma delas para conhecer sua função.`;
-      updateBoneControls();
+      updateSystemControls();
+      draw(performance.now());
+    });
+    $('#muscle-filter').addEventListener('change', () => {
+      const shown = selectedMuscles();
+      $('#detail').textContent = shown.length === 1
+        ? `${shown[0].name}: ${shown[0].info}`
+        : `${shown.length} grupos musculares selecionados nesta vista. Toque em um deles para conhecer sua função.`;
       draw(performance.now());
     });
     $('#joint-toggle').addEventListener('click', () => {
@@ -699,6 +783,12 @@
     });
     $('#view-select').addEventListener('change', event => {
       manualView = event.target.value === 'back' ? 'back' : 'front';
+      if (systemMode === 'muscles') {
+        const shown = window.MuscleRig.visibleParts(manualView, $('#muscle-filter').value);
+        $('#detail').textContent = shown.length === 1
+          ? `${shown[0].name}: ${shown[0].info}`
+          : `${shown.length} grupos musculares selecionados nesta vista. Toque em um deles para conhecer sua função.`;
+      }
       draw(performance.now());
     });
     window.addEventListener('pagehide', () => { if (stream) stream.getTracks().forEach(track => track.stop()); });

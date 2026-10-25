@@ -34,7 +34,8 @@ class FakeImage {
 }
 const context = vm.createContext({
   document: { querySelector: selector => element(selector.slice(1)), createElement: () => ({}) },
-  window: { devicePixelRatio: 1, addEventListener() {} },
+  window: { devicePixelRatio: 1, addEventListener() {},
+    MuscleRig: require('../musculos/rig.js') },
   Image: FakeImage, performance: { now: () => 0 }, requestAnimationFrame() {},
   console, Math, Set, Map, Promise
 });
