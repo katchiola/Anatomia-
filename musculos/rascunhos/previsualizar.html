@@ -23,11 +23,11 @@
 <body>
   <h1>Imagens musculares — prévia de trabalho</h1>
   <p>Dezoito imagens, com vista de frente e de costas para cada uma das nove regiões. O fundo quadriculado revela quais peças têm transparência suficiente para aparecer sobre a câmera.</p>
-  <div class="note">A cabeça mostra a nova peça da versão 3.2, com músculos integrados ao crânio. Os outros grupos mostram os originais gerados para a versão 3.1. O aplicativo usa cópias otimizadas em <code>musculos/vistas/</code>.</div>
+  <div class="note">A cabeça mostra a frente da versão 3.3, agora com olhos, e as costas preservadas da 3.2. Os outros grupos mostram os originais da 3.1. O aplicativo usa cópias otimizadas em <code>musculos/vistas/</code>.</div>
   <main class="grid" id="grid"></main>
   <script>
     const regions=[
-      ['rosto','Cabeça e crânio','nova peça 3.2'],
+      ['rosto','Cabeça e crânio','olhos na frente · 3.3'],
       ['torax','Tórax','transparência confirmada'],
       ['abdome','Abdome','revisar encaixe'],
       ['braco','Braço','transparência confirmada'],
@@ -45,7 +45,9 @@
       const pair=document.createElement('div');pair.className='pair';
       for(const [file,label] of [['01-frente.png','Frente'],['05-costas.png','Costas']]){
         const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
-        img.src=folder==='rosto' ? `cranio-v3.2/${file}` : `vistas/${folder}/${file}`;
+        img.src=folder==='rosto'
+          ? (file==='01-frente.png' ? `cranio-v3.3/${file}` : `cranio-v3.2/${file}`)
+          : `vistas/${folder}/${file}`;
         img.alt=`${name}, vista de ${label.toLowerCase()}`;img.loading='lazy';caption.textContent=label;
         figure.append(img,caption);pair.append(figure);
       }

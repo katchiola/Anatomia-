@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Anatomia Mágica 3.2</title>
+  <title>Anatomia Mágica 3.3</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #101827; color: #fff; font: 16px system-ui, sans-serif; }
@@ -34,7 +34,7 @@
 </head>
 <body>
   <header>
-    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 3.2 · órgãos, ossos e músculos</small></div>
+    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 3.3 · órgãos, ossos e músculos</small></div>
     <span id="status" role="status">Modo demonstração</span>
   </header>
   <div class="stage demo" id="stage">
@@ -102,7 +102,7 @@
     <p id="help-text">As posições são esquemáticas e aproximadas. Ao aproximar a câmera, as imagens acompanham a escala da cabeça, dos ombros ou dos quadris que estiverem visíveis. Se nenhum desses pontos for reconhecido, afaste um pouco a câmera. O app mantém a última vista quando a pessoa está de lado; se a detecção não corresponder à posição, escolha frente ou costas manualmente. A câmera é processada no aparelho.</p>
   </div>
   <script src="ossos/rig.js?v=2.0.2"></script>
-  <script src="musculos/rig.js?v=3.2"></script>
+  <script src="musculos/rig.js?v=3.3"></script>
   <script>
     const $ = selector => document.querySelector(selector);
     const stage = $('#stage');
@@ -313,7 +313,7 @@
       const entry = { image: new Image(), ready: false, error: false, crop: null };
       entry.image.onload = () => { entry.crop = imageCrop(entry.image); entry.ready = true; draw(performance.now()); };
       entry.image.onerror = () => { entry.error = true; console.error('Músculo ausente:', entry.image.src); draw(performance.now()); };
-      entry.image.src = `musculos/vistas/${region}/${viewFiles[view]}?v=3.2`;
+      entry.image.src = `musculos/vistas/${region}/${viewFiles[view]}?v=3.3`;
       muscleCache.set(key, entry);
       return entry;
     }

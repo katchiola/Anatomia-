@@ -76,7 +76,7 @@ assert.ok(render(shouldersOnly, 'front').some(hit => hit.organ.id === 'abdome'),
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 assert.match(html, /<option value="muscles">Músculos<\/option>/);
 assert.match(html, /id="muscle-filter"/);
-assert.match(html, /<script src="musculos\/rig\.js\?v=3\.2"><\/script>/);
+assert.match(html, /<script src="musculos\/rig\.js\?v=3\.3"><\/script>/);
 assert.match(html, /systemMode === 'muscles'/);
 assert.match(html, /image: muscleSprite/);
 console.log('OK: 18 imagens, 15 peças, duas vistas, nove regiões, movimento e closes.');

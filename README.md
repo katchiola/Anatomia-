@@ -4,9 +4,11 @@ Aplicativo web educativo de anatomia em realidade aumentada. Usa a câmera do ce
 
 ## Versão atual
 
-**3.2 (teste local concluído; validação com a câmera do celular pendente)**
+**3.3 (teste local concluído; validação com a câmera do celular pendente)**
 
-O arquivo `index.html` da raiz é a versão ativa. A versão 3.1 permanece preservada em `versoes/v3.1/` e no ZIP respectivo. As versões anteriores continuam disponíveis nas cópias locais em `versoes/` e `pacotes/` e no histórico do GitHub.
+O arquivo `index.html` da raiz é a versão ativa. A versão 3.2 permanece preservada em `versoes/v3.2/` e no ZIP respectivo. As versões anteriores continuam disponíveis nas cópias locais em `versoes/` e `pacotes/` e no histórico do GitHub.
+
+A versão 3.3 coloca olhos na imagem frontal do crânio muscular. A vista posterior e o posicionamento da cabeça permanecem como na 3.2.
 
 A versão 3.2 refaz a peça muscular da cabeça nas duas vistas: os músculos da face e da nuca agora aparecem sobre o crânio, com um pescoço curto ligando a peça ao tronco. O posicionamento sobre o rosto foi ajustado para incluir o topo da cabeça. As outras oito regiões musculares, os órgãos e os ossos permanecem disponíveis.
 
@@ -53,4 +55,4 @@ Para conferir os 13 órgãos e suas vistas, execute `node tests/vistas.test.cjs`
 
 A câmera é processada no próprio aparelho pelo código do navegador. O aplicativo não possui contas, login ou servidor de armazenamento de imagens.
 
-As posições anatômicas são educativas e aproximadas. O rastreamento do corpo não mede a abertura da boca nem a contração muscular; a mandíbula tem controle manual, e os músculos seguem a posição dos segmentos corporais. Ainda é preciso conferir alinhamento, escala e desempenho da versão 3.2 com câmera real em um celular. O aplicativo não é uma ferramenta médica.
+As posições anatômicas são educativas e aproximadas. O rastreamento do corpo não mede a abertura da boca nem a contração muscular; a mandíbula tem controle manual, e os músculos seguem a posição dos segmentos corporais. Ainda é preciso conferir alinhamento, escala e desempenho da versão 3.3 com câmera real em um celular. O aplicativo não é uma ferramenta médica.

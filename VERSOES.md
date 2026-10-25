@@ -131,9 +131,15 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - Os originais das ilustrações foram preservados em `musculos/rascunhos/`; as cópias transparentes otimizadas para o aplicativo estão em `musculos/vistas/`.
 - Prévia e testes locais confirmaram as 18 imagens, as duas vistas, o movimento dos membros, os closes e os modos anteriores. A escala final com câmera real ainda precisa de conferência no celular.
 
-### 3.2 — versão ativa; validação no celular pendente
+### 3.2 — preservada; validação no celular pendente
 
 - Refeita a peça muscular da cabeça de frente e de costas: músculos da face e da nuca foram integrados ao crânio, com pescoço curto nas duas vistas.
 - Ajustados altura e posição da peça para mostrar o topo do crânio e aproximar o pescoço do tórax, inclusive na demonstração e nos closes.
 - As imagens originais novas foram preservadas em `musculos/rascunhos/cranio-v3.2/`; as duas imagens otimizadas substituíram apenas a peça da cabeça em `musculos/vistas/rosto/`.
 - Os demais músculos, os 13 órgãos e os 16 ossos seguem separados em seus modos. Testes locais passaram; o encaixe com câmera real ainda precisa ser conferido no celular.
+
+### 3.3 — versão ativa; validação no celular pendente
+
+- Inseridos olhos castanhos nas órbitas da peça muscular frontal da cabeça, preservando crânio, músculos faciais e pescoço. A vista posterior não mudou.
+- O original gerado foi salvo em `musculos/rascunhos/cranio-v3.3/`; a imagem frontal otimizada substituiu apenas `musculos/vistas/rosto/01-frente.png`.
+- Atualizados o número exibido no site, a prévia e o endereço da imagem para evitar cópia antiga no cache. Os outros órgãos, ossos e músculos não foram alterados.
