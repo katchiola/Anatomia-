@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Anatomia Mágica 2.0</title>
+  <title>Anatomia Mágica 2.0.1</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #101827; color: #fff; font: 16px system-ui, sans-serif; }
@@ -18,6 +18,7 @@
     .hint { position: absolute; bottom: 12px; left: 12px; right: 12px; background: #111a2ad9; padding: 10px; border-radius: 10px; text-align: center; font-size: 13px; pointer-events: none; }
     .stage.bones .hint { display: none; }
     .outside-hint { max-width: 780px; margin: 6px auto 0; padding: 8px 14px; color: #dbeafe; text-align: center; font-size: 13px; }
+    .bone-actions { max-width: 780px; margin: 6px auto; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
     .controls { max-width: 780px; margin: auto; padding: 14px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
     button, select { border: 0; background: #22c55e; color: #09200f; padding: 11px 12px; border-radius: 12px; font: inherit; font-weight: 700; }
     button { cursor: pointer; }
@@ -33,7 +34,7 @@
 </head>
 <body>
   <header>
-    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 2.0 · órgãos e ossos</small></div>
+    <div><h1>🫀 Anatomia Mágica</h1><small>Versão 2.0.1 · órgãos e ossos</small></div>
     <span id="status" role="status">Modo demonstração</span>
   </header>
   <div class="stage demo" id="stage">
@@ -42,6 +43,10 @@
     <div class="hint" id="hint">Escolha frente ou costas. Toque em “Iniciar câmera” para experimentar no corpo.</div>
   </div>
   <div id="bone-hint" class="outside-hint" hidden></div>
+  <div id="bone-actions" class="bone-actions" hidden>
+    <button id="jaw-control" class="secondary" type="button" hidden>🗣️ Abrir boca</button>
+    <button id="joint-toggle" class="secondary" type="button" hidden>🦴 Articulações: não</button>
+  </div>
   <div class="controls">
     <button id="start" type="button">📷 Iniciar câmera</button>
     <button id="demo" class="secondary" type="button">🧪 Demonstração</button>
@@ -77,8 +82,6 @@
         <option value="pes">Pés</option>
       </select>
     </span>
-    <button id="joint-toggle" class="secondary" type="button" hidden>🦴 Articulações: não</button>
-    <button id="jaw-control" class="secondary" type="button" hidden>🗣️ Abrir boca</button>
     <button id="rotation-mode" class="secondary" type="button" disabled>🧭 Vista: manual</button>
     <div class="view-controls" id="view-controls">
       <label for="view-select">Mostrar</label>
@@ -124,6 +127,7 @@
     let systemMode = 'organs';
     let showJoints = false;
     let jawOpen = 0;
+    let jawTarget = 0;
     let stream = null;
     let pose = null;
     let landmarks = null;
@@ -304,6 +308,7 @@
       const bones = systemMode === 'bones';
       stage.classList.toggle('bones', bones);
       $('#bone-hint').hidden = !bones;
+      $('#bone-actions').hidden = !bones;
       $('#bone-hint').textContent = $('#hint').textContent;
       $('#organ-controls').hidden = bones;
       $('#bone-controls').hidden = !bones;
@@ -442,6 +447,8 @@
         return;
       }
       if (systemMode === 'bones') {
+        jawOpen = Math.abs(jawTarget - jawOpen) < .01
+          ? jawTarget : jawOpen + (jawTarget - jawOpen) * .38;
         if (!demo && trackingReady) {
           const hint = body?.length < 100
             ? 'Mostre o corpo inteiro para ver os ossos das pernas e dos braços.'
@@ -672,8 +679,8 @@
       draw(performance.now());
     });
     $('#jaw-control').addEventListener('click', () => {
-      jawOpen = jawOpen ? 0 : 1;
-      $('#jaw-control').textContent = jawOpen ? '🗣️ Fechar boca' : '🗣️ Abrir boca';
+      jawTarget = jawTarget ? 0 : 1;
+      $('#jaw-control').textContent = jawTarget ? '🗣️ Fechar boca' : '🗣️ Abrir boca';
       draw(performance.now());
     });
     $('#rotation-mode').addEventListener('click', () => {

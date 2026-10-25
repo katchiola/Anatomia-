@@ -135,11 +135,15 @@
         { x: head.x, y: head.y + headHeight * .38 }, shoulders, faceWidth * .12);
       central('cranio', head, faceWidth, headHeight);
       if (wanted.has('mandibula') && view === 'front') {
-        const jaw = { x: head.x, y: head.y + headHeight * (.33 + .11 * jawOpen) };
-        putImage('mandibula', jaw, faceWidth * .67, headHeight * .35, jawOpen * .035);
+        // As extremidades superiores permanecem nas articulações próximas às orelhas.
+        // Ao abrir, o queixo desce enquanto os dentes inferiores se afastam dos superiores.
+        const jawTop = head.y + headHeight * .29;
+        const jawHeight = headHeight * (.35 + .17 * jawOpen);
+        const jaw = { x: head.x, y: jawTop + jawHeight / 2 };
+        putImage('mandibula', jaw, faceWidth * .67, jawHeight);
         if (showJoints) {
-          joints.push({ point: { x: head.x - faceWidth * .30, y: head.y + headHeight * .18 }, label: 'Mandíbula' });
-          joints.push({ point: { x: head.x + faceWidth * .30, y: head.y + headHeight * .18 }, label: 'Mandíbula' });
+          joints.push({ point: { x: head.x - faceWidth * .30, y: jawTop }, label: 'Mandíbula' });
+          joints.push({ point: { x: head.x + faceWidth * .30, y: jawTop }, label: 'Mandíbula' });
         }
       } else if (wanted.has('mandibula') && view === 'back') {
         putImage('mandibula', { x: head.x, y: head.y + headHeight * .39 },

@@ -16,8 +16,9 @@ for (const part of rig.parts) {
 }
 
 const calls = [];
+const imageDraws = [];
 const ctx = new Proxy({}, { get(_target, key) {
-  if (key === 'drawImage') return () => calls.push('drawImage');
+  if (key === 'drawImage') return (...args) => { calls.push('drawImage'); imageDraws.push(args); };
   return () => {};
 } });
 const seen = [];
@@ -50,8 +51,13 @@ assert.deepEqual(spots.map(item => item.organ.id).sort(), ['pe_direito', 'pe_esq
 assert.equal(seen.length, 2, 'O filtro Pés não deve carregar outros ossos.');
 
 const closed = render(front, 'front', 'cranio', 0).find(item => item.organ.id === 'mandibula');
+const closedHeight = imageDraws.at(-1).at(-1);
 const open = render(front, 'front', 'cranio', 1).find(item => item.organ.id === 'mandibula');
+const openHeight = imageDraws.at(-1).at(-1);
 assert.ok(open.y > closed.y, 'A mandíbula deve descer quando a boca abre.');
+assert.ok(openHeight > closedHeight * 1.4, 'A abertura deve ser visível.');
+assert.ok(Math.abs((closed.y - closedHeight / 2) - (open.y - openHeight / 2)) < .001,
+  'A parte superior da mandíbula deve permanecer junto à articulação.');
 
 const before = render(front).find(item => item.organ.id === 'umero_direito');
 const moved = front.map(point => point && { ...point });
@@ -71,4 +77,6 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 assert.match(html, /id="system-select"/);
 assert.match(html, /<script src="ossos\/rig\.js"><\/script>/);
 assert.match(html, /systemMode === 'bones'/);
+assert.match(html, /id="bone-actions"/);
+assert.match(html, /jawTarget = jawTarget \? 0 : 1/);
 console.log('OK: 16 peças, duas vistas, nove setores, articulações, mandíbula e troca de sistema.');

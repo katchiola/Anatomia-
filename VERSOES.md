@@ -93,7 +93,7 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - O fígado foi deslocado levemente para o centro para permanecer dentro da largura do tronco. O pâncreas manteve o tamanho da 1.5.5, aprovado no teste visual.
 - Testes automatizados passaram para tamanhos, 13 órgãos, vistas de frente/costas e ampliação em closes. A proporção final ainda precisa de nova conferência com câmera real.
 
-### 2.0 — versão ativa; validação no celular pendente
+### 2.0 — preservada; validação no celular identificou ajuste necessário na mandíbula
 
 - Adicionado seletor Sistema para alternar entre Órgãos e Ossos. Os dois sistemas não aparecem simultaneamente e a troca não reinicia a câmera.
 - Mantidos os 13 órgãos, filtros, imagens de frente/costas e proporções da 1.5.6.
@@ -101,3 +101,9 @@ Se uma versão nova apresentar erro, restaure o `index.html` da última pasta es
 - Incluídos marcadores opcionais das articulações e mandíbula separada com controle manual de abertura na vista frontal. A demonstração mostra o esqueleto completo sem câmera.
 - A mensagem de ajuda fica abaixo da área da imagem no modo Ossos para não encobrir os pés.
 - Testes locais passaram para os órgãos, ossos, setores, vistas, movimento dos membros e mandíbula. A montagem e o desempenho com a câmera real ainda precisam de teste no celular.
+
+### 2.0.1 — versão ativa; validação no celular pendente
+
+- A mandíbula fechada foi reposicionada abaixo dos dentes superiores. A abertura manual agora é visível e mantém as extremidades superiores próximas às articulações do crânio.
+- Os controles de abertura da boca e articulações foram movidos para logo abaixo da imagem, com acesso mais fácil no celular.
+- Teste local confirmou as posições fechada e aberta, a separação entre Órgãos e Ossos e as vistas de frente e costas. Falta conferir com câmera real no celular.
